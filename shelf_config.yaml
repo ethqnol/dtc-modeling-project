@@ -1,0 +1,86 @@
+# Tunable Model Weights for Wire Shelf Label Simulation
+# Physical dimensions and fixed SKU lists live in shelf_geometry.yaml.
+# Run with overrides via: python3 run_experiments.py --config my_weights.{yaml,json,toon} [--quick]
+
+execution:
+  benchmark_replications: 50
+  sweep_replications: 25
+  search_replications: 4
+  composite_score_latency_weight: 0.85
+
+behavioral_weights:
+  # Grounded independently in THERP human reliability [6], order-picking ergonomics [5, 7],
+  # Fitts's Law [2], retail congestion [3], and Category Adjustment [4].
+  # Layout rankings stay stable across handbook ranges because all setups share these weights.
+  base_error_rate: 0.028              # Standard 1%-3% routine manual HEP (THERP [6] / picking [7])
+  base_correction_rate: 0.24          # 15%-30% incidental anomaly fix rate during active access [3, 6]
+  alpha_rush: 2.8                     # 2.6x-3.8x error multiplier at peak rush (THERP time stress [2, 6])
+  alpha_crowd: 3.2                    # Fitts's congestion slope past 75%-80% working fill ceiling [2, 3, 5]
+  alpha_blur: 1.75                    # Category Adjustment boundary noise slope [3, 4]
+  alpha_ergo: 2.3                     # Ergonomic reach/bend strain multiplier across shelf zones [5, 7]
+  bin_dump_error_penalty: 0.09        # Added return-slip blur per open wire bin on shelf [4, 7]
+  bin_dump_routing_weight: 0.28       # Drop-in attraction pulling rushed slips into wire bins [4, 7]
+  mech_diversity_penalty: 0.08        # Cognitive switching load per storage style beyond 2 [7]
+  unlatch_rush_prob: 0.38             # Hurried bypass prob * tau leaving pull-down peg row down [6, 7]
+  occlusion_friction_penalty: 0.35    # Extra error friction while unlatched peg blocks Mid shelf
+  search_miss_penalty_sec: 14.0       # Base search effort multiplier when a roll is missing from home
+  usability_accuracy_threshold: 0.80  # 80% accuracy threshold for collapse tracking
+
+demand_weights:
+  rush_job_share: 0.45                # Share of shift jobs inside 8:00-10:00 AM batch rush
+  rush_tau_range: [0.75, 1.00]        # Urgency tau during rush window
+  calm_tau_range: [0.10, 0.35]        # Urgency tau outside rush window
+  rush_sku_boost: 3.6                 # Demand multiplier on priority categories during rush
+  same_product_co_retrieval: 0.90     # Probability that A/B/C siblings are pulled together
+
+mechanisms:
+  split_drawer_eye:
+    label: "Mid Shelf: Modular Split Drawers"
+    reach_actuation_cost: 0.14
+    visibility_closed: 0.18
+    visibility_open: 0.88
+    clearance_score: 0.75
+    base_retrieval_sec: 3.0
+    base_return_sec: 2.5
+    supports_coreless: true
+    is_pull_down: false
+  split_drawer_mid:
+    label: "Btm Shelf: Modular Split Drawers"
+    reach_actuation_cost: 0.38
+    visibility_closed: 0.15
+    visibility_open: 0.78
+    clearance_score: 0.76
+    base_retrieval_sec: 4.3
+    base_return_sec: 3.5
+    supports_coreless: true
+    is_pull_down: false
+  wire_bin_eye:
+    label: "Mid Shelf: Wire Bin"
+    reach_actuation_cost: 0.28
+    visibility_closed: 0.45
+    visibility_open: 0.68
+    clearance_score: 0.88
+    base_retrieval_sec: 4.2
+    base_return_sec: 3.4
+    supports_coreless: true
+    is_pull_down: false
+  wire_bin_mid:
+    label: "Btm Shelf: Wire Bin"
+    reach_actuation_cost: 0.42
+    visibility_closed: 0.40
+    visibility_open: 0.62
+    clearance_score: 0.88
+    base_retrieval_sec: 4.9
+    base_return_sec: 3.9
+    supports_coreless: true
+    is_pull_down: false
+  pegboard_ovh:
+    label: "Top Shelf: Sliding Peg (32 Pegs)"
+    reach_actuation_cost: 0.22
+    visibility_closed: 0.84
+    visibility_open: 0.94
+    clearance_score: 0.62
+    base_retrieval_sec: 3.6
+    base_return_sec: 3.3
+    supports_coreless: false
+    is_pull_down: true

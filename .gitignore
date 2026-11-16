@@ -1,0 +1,6 @@
+.agents
+*.md
+.venv
+__pycache__/
+*.pyc
+__marimo__
