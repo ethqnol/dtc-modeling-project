@@ -668,7 +668,7 @@ def plot_fig4_capacity_and_partitions(
         ctx.restore()
 
         sweep_styles = [
-            ("TOPO01_Mid7D4P_Btm1B4D4P", "Top: Peg | Mid: 7D_4P | Btm: 1B_4D_4P", PALETTE["ORI-CHAMP"]),
+            ("TOPO001_Mid7D4P_Btm7D4P", "Top: Peg | Mid: 7D_4P | Btm: 7D_4P (ORI-001)", PALETTE["ORI-CHAMP"]),
             ("TOPO07_Mid7D4P_Btm2B", "Top: Peg | Mid: 7D_4P | Btm: 2B", PALETTE["ORI-245"]),
             ("TOPO07_BaselineCOI", "Top: Peg | Mid: 7D_4P | Btm: 2B (COI baseline)", PALETTE["ORI-258"]),
         ]

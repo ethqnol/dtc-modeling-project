@@ -49,8 +49,8 @@ def run_capacity_sweep(
 ) -> Dict[str, List[Tuple[float, float, float]]]:
     """Sweep target fill ratio rho across core modular 120x60x60 cm layout architectures."""
     configs = {
-        "TOPO01_Mid7D4P_Btm1B4D4P": (
-            ("7D_4P", "1B_4D_4P", "SLIDING_PEG"),
+        "TOPO001_Mid7D4P_Btm7D4P": (
+            ("7D_4P", "7D_4P", "SLIDING_PEG"),
             "adjacent_partition",
             "hybrid_reserve",
             "center_out",
