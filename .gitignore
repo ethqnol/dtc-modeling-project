@@ -4,3 +4,6 @@
 __pycache__/
 *.pyc
 __marimo__
+.pixi/*
+!.pixi/config.toml
+run_experiments

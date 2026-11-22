@@ -1,0 +1,1703 @@
+{
+  "top_ori_id": "ORI-261",
+  "search_meta": {
+    "num_topologies": 165,
+    "num_policies": 5
+  },
+  "geometry": {
+    "shelf_width_cm": 120.0,
+    "shelf_depth_cm": 60.0,
+    "shelf_row_height_cm": 60.0,
+    "eye_level_height_cm": 140.0,
+    "bottom_level_height_cm": 25.0,
+    "mid_level_height_cm": 80.0,
+    "top_overhead_height_cm": 195.0,
+    "drawer_outer_width_cm": 15.24,
+    "drawer_inner_width_cm": 14.0,
+    "drawers_per_full_row": 7,
+    "drawers_per_half_bay": 4,
+    "drawer_9in_outer_width_cm": 22.86,
+    "drawer_9in_inner_width_cm": 21.6,
+    "drawers_9in_per_full_row": 5,
+    "drawers_9in_per_half_bay": 3,
+    "partition_6in_4p_cm": 6.8,
+    "partition_6in_3p_top_cm": 14.0,
+    "partition_9in_4p_cm": 10.600000000000001,
+    "partition_9in_3p_top_cm": 21.6,
+    "wire_bin_bay_width_cm": 51.4,
+    "wire_bin_subzones": 4,
+    "wire_bin_subzone_hard_cap": 9,
+    "peg_rows": 8,
+    "pegs_per_row": 4,
+    "peg_max_od_cm": 15.24
+  },
+  "mechanisms": [
+    {
+      "mechanism_id": "split_drawer_eye",
+      "reach_actuation_cost": 0.14,
+      "visibility_closed": 0.18,
+      "visibility_open": 0.88,
+      "clearance_score": 0.75,
+      "base_retrieval_sec": 3.0,
+      "base_return_sec": 2.5,
+      "supports_coreless": true,
+      "is_pull_down": false
+    },
+    {
+      "mechanism_id": "split_drawer_mid",
+      "reach_actuation_cost": 0.38,
+      "visibility_closed": 0.15,
+      "visibility_open": 0.78,
+      "clearance_score": 0.76,
+      "base_retrieval_sec": 4.3,
+      "base_return_sec": 3.5,
+      "supports_coreless": true,
+      "is_pull_down": false
+    },
+    {
+      "mechanism_id": "wire_bin_eye",
+      "reach_actuation_cost": 0.28,
+      "visibility_closed": 0.45,
+      "visibility_open": 0.68,
+      "clearance_score": 0.88,
+      "base_retrieval_sec": 4.2,
+      "base_return_sec": 3.4,
+      "supports_coreless": true,
+      "is_pull_down": false
+    },
+    {
+      "mechanism_id": "wire_bin_mid",
+      "reach_actuation_cost": 0.42,
+      "visibility_closed": 0.4,
+      "visibility_open": 0.62,
+      "clearance_score": 0.88,
+      "base_retrieval_sec": 4.9,
+      "base_return_sec": 3.9,
+      "supports_coreless": true,
+      "is_pull_down": false
+    },
+    {
+      "mechanism_id": "pegboard_ovh",
+      "reach_actuation_cost": 0.22,
+      "visibility_closed": 0.84,
+      "visibility_open": 0.94,
+      "clearance_score": 0.62,
+      "base_retrieval_sec": 3.6,
+      "base_return_sec": 3.3,
+      "supports_coreless": false,
+      "is_pull_down": true
+    }
+  ],
+  "rush": {
+    "num_shifts": 20,
+    "shift_cycles": 50,
+    "total_cycles": 1000,
+    "rush_job_share": 0.45,
+    "rush_tau_range": [
+      0.75,
+      1.0
+    ],
+    "calm_tau_range": [
+      0.1,
+      0.35
+    ],
+    "rush_sku_boost": 3.6,
+    "rush_priority_categories": [
+      "Bites",
+      "Salad",
+      "Breakfast Cookies"
+    ],
+    "same_product_co_retrieval": 0.9
+  },
+  "behavior": {
+    "base_error_rate": 0.028,
+    "base_correction_rate": 0.24,
+    "alpha_rush": 2.8,
+    "alpha_ergo": 2.3,
+    "alpha_crowd": 3.2,
+    "alpha_blur": 1.75,
+    "bin_dump_error_penalty": 0.11,
+    "bin_dump_routing_weight": 0.3,
+    "mech_diversity_penalty": 0.1,
+    "bin_drawer_same_row_penalty": 0.16,
+    "multi_sku_slot_penalty": 0.16,
+    "slot_deficit_penalty": 1.2,
+    "row_width_mismatch_penalty": 0.25,
+    "unlatch_rush_prob": 0.38,
+    "usability_accuracy_threshold": 0.8
+  },
+  "inventory": {
+    "num_rolls": 128,
+    "num_rush_rolls": 75,
+    "abc_pairs": 22,
+    "variants": [
+      {
+        "sku_code": "Peppermint Dark Chocolate Bark [A]",
+        "product_name": "Peppermint Dark Chocolate Bark",
+        "variant_code": "A",
+        "category": "Chocolate bark",
+        "quantity": 1,
+        "outer_diameter_cm": 8.7,
+        "roll_height_cm": 16.0,
+        "has_core": true,
+        "is_rush_priority": false,
+        "baseline_freq": 0.010648148148148143,
+        "rush_freq": 0.0032535111649994943
+      },
+      {
+        "sku_code": "Peppermint Dark Chocolate Bark [B]",
+        "product_name": "Peppermint Dark Chocolate Bark",
+        "variant_code": "B",
+        "category": "Chocolate bark",
+        "quantity": 3,
+        "outer_diameter_cm": 10.2,
+        "roll_height_cm": 7.7,
+        "has_core": true,
+        "is_rush_priority": false,
+        "baseline_freq": 0.020833333333333325,
+        "rush_freq": 0.006365565322825098
+      },
+      {
+        "sku_code": "All You Need Is Love [A]",
+        "product_name": "All You Need Is Love",
+        "variant_code": "A",
+        "category": "Other",
+        "quantity": 1,
+        "outer_diameter_cm": 9.0,
+        "roll_height_cm": 16.0,
+        "has_core": true,
+        "is_rush_priority": false,
+        "baseline_freq": 0.010648148148148143,
+        "rush_freq": 0.0032535111649994943
+      },
+      {
+        "sku_code": "Super Food Dark Chocolate Bark [A]",
+        "product_name": "Super Food Dark Chocolate Bark",
+        "variant_code": "A",
+        "category": "Chocolate bark",
+        "quantity": 1,
+        "outer_diameter_cm": 8.5,
+        "roll_height_cm": 16.0,
+        "has_core": true,
+        "is_rush_priority": false,
+        "baseline_freq": 0.010648148148148143,
+        "rush_freq": 0.0032535111649994943
+      },
+      {
+        "sku_code": "Super Food Dark Chocolate Bark [B]",
+        "product_name": "Super Food Dark Chocolate Bark",
+        "variant_code": "B",
+        "category": "Chocolate bark",
+        "quantity": 1,
+        "outer_diameter_cm": 10.0,
+        "roll_height_cm": 22.0,
+        "has_core": true,
+        "is_rush_priority": false,
+        "baseline_freq": 0.010648148148148143,
+        "rush_freq": 0.0032535111649994943
+      },
+      {
+        "sku_code": "Super Food Dark Chocolate Bark [C]",
+        "product_name": "Super Food Dark Chocolate Bark",
+        "variant_code": "C",
+        "category": "Chocolate bark",
+        "quantity": 1,
+        "outer_diameter_cm": 9.0,
+        "roll_height_cm": 8.0,
+        "has_core": true,
+        "is_rush_priority": false,
+        "baseline_freq": 0.010648148148148143,
+        "rush_freq": 0.0032535111649994943
+      },
+      {
+        "sku_code": "Super Food Dark Chocolate Bark (Nut Free) [A]",
+        "product_name": "Super Food Dark Chocolate Bark (Nut Free)",
+        "variant_code": "A",
+        "category": "Chocolate bark",
+        "quantity": 1,
+        "outer_diameter_cm": 10.6,
+        "roll_height_cm": 22.0,
+        "has_core": true,
+        "is_rush_priority": false,
+        "baseline_freq": 0.010648148148148143,
+        "rush_freq": 0.0032535111649994943
+      },
+      {
+        "sku_code": "Super Food Dark Chocolate Bark (Nut Free) [B]",
+        "product_name": "Super Food Dark Chocolate Bark (Nut Free)",
+        "variant_code": "B",
+        "category": "Chocolate bark",
+        "quantity": 3,
+        "outer_diameter_cm": 8.5,
+        "roll_height_cm": 8.0,
+        "has_core": true,
+        "is_rush_priority": false,
+        "baseline_freq": 0.020833333333333325,
+        "rush_freq": 0.006365565322825098
+      },
+      {
+        "sku_code": "Crumble: Super Food Dark Chocolate Bark [A]",
+        "product_name": "Crumble: Super Food Dark Chocolate Bark",
+        "variant_code": "A",
+        "category": "Chocolate bark",
+        "quantity": 2,
+        "outer_diameter_cm": 11.0,
+        "roll_height_cm": 4.5,
+        "has_core": true,
+        "is_rush_priority": false,
+        "baseline_freq": 0.015740740740740736,
+        "rush_freq": 0.004809538243912296
+      },
+      {
+        "sku_code": "Peppermint Dark Chocolate Bark Ingredient Sticker [A]",
+        "product_name": "Peppermint Dark Chocolate Bark Ingredient Sticker",
+        "variant_code": "A",
+        "category": "Ingredient sticker",
+        "quantity": 1,
+        "outer_diameter_cm": 8.7,
+        "roll_height_cm": 14.0,
+        "has_core": true,
+        "is_rush_priority": false,
+        "baseline_freq": 0.018055555555555547,
+        "rush_freq": 0.005516823279781752
+      },
+      {
+        "sku_code": "Dark Chocolate Bark Ingredient Sticker [A]",
+        "product_name": "Dark Chocolate Bark Ingredient Sticker",
+        "variant_code": "A",
+        "category": "Ingredient sticker",
+        "quantity": 1,
+        "outer_diameter_cm": 8.5,
+        "roll_height_cm": 13.5,
+        "has_core": true,
+        "is_rush_priority": false,
+        "baseline_freq": 0.018055555555555547,
+        "rush_freq": 0.005516823279781752
+      },
+      {
+        "sku_code": "Mint Dark Chocolate Bark [A]",
+        "product_name": "Mint Dark Chocolate Bark",
+        "variant_code": "A",
+        "category": "Chocolate bark",
+        "quantity": 1,
+        "outer_diameter_cm": 12.6,
+        "roll_height_cm": 22.2,
+        "has_core": true,
+        "is_rush_priority": false,
+        "baseline_freq": 0.010648148148148143,
+        "rush_freq": 0.0032535111649994943
+      },
+      {
+        "sku_code": "Mint Dark Chocolate Bark [B]",
+        "product_name": "Mint Dark Chocolate Bark",
+        "variant_code": "B",
+        "category": "Chocolate bark",
+        "quantity": 2,
+        "outer_diameter_cm": 10.0,
+        "roll_height_cm": 7.2,
+        "has_core": true,
+        "is_rush_priority": false,
+        "baseline_freq": 0.015740740740740736,
+        "rush_freq": 0.004809538243912296
+      },
+      {
+        "sku_code": "Roasted Carrot Ginger Soup [A]",
+        "product_name": "Roasted Carrot Ginger Soup",
+        "variant_code": "A",
+        "category": "Soup",
+        "quantity": 1,
+        "outer_diameter_cm": 8.3,
+        "roll_height_cm": 22.2,
+        "has_core": true,
+        "is_rush_priority": false,
+        "baseline_freq": 0.010648148148148143,
+        "rush_freq": 0.0032535111649994943
+      },
+      {
+        "sku_code": "Peppermint Clean Bites [A]",
+        "product_name": "Peppermint Clean Bites",
+        "variant_code": "A",
+        "category": "Bites",
+        "quantity": 1,
+        "outer_diameter_cm": 10.5,
+        "roll_height_cm": 24.0,
+        "has_core": true,
+        "is_rush_priority": true,
+        "baseline_freq": 0.010648148148148143,
+        "rush_freq": 0.016732343134283113
+      },
+      {
+        "sku_code": "Peppermint Clean Bites [B]",
+        "product_name": "Peppermint Clean Bites",
+        "variant_code": "B",
+        "category": "Bites",
+        "quantity": 4,
+        "outer_diameter_cm": 11.8,
+        "roll_height_cm": 8.2,
+        "has_core": true,
+        "is_rush_priority": true,
+        "baseline_freq": 0.025925925925925918,
+        "rush_freq": 0.04073961806608064
+      },
+      {
+        "sku_code": "Sunshine Cookie Dough Bites [A]",
+        "product_name": "Sunshine Cookie Dough Bites",
+        "variant_code": "A",
+        "category": "Bites",
+        "quantity": 1,
+        "outer_diameter_cm": 11.7,
+        "roll_height_cm": 18.0,
+        "has_core": true,
+        "is_rush_priority": true,
+        "baseline_freq": 0.010648148148148143,
+        "rush_freq": 0.016732343134283113
+      },
+      {
+        "sku_code": "Sunshine Cookie Dough Bites [B]",
+        "product_name": "Sunshine Cookie Dough Bites",
+        "variant_code": "B",
+        "category": "Bites",
+        "quantity": 2,
+        "outer_diameter_cm": 13.3,
+        "roll_height_cm": 25.0,
+        "has_core": true,
+        "is_rush_priority": true,
+        "baseline_freq": 0.015740740740740736,
+        "rush_freq": 0.02473476811154896
+      },
+      {
+        "sku_code": "Garlic and Onion Clean Crackers [A]",
+        "product_name": "Garlic and Onion Clean Crackers",
+        "variant_code": "A",
+        "category": "Crackers",
+        "quantity": 4,
+        "outer_diameter_cm": 11.0,
+        "roll_height_cm": 8.5,
+        "has_core": true,
+        "is_rush_priority": false,
+        "baseline_freq": 0.025925925925925918,
+        "rush_freq": 0.0079215924017379
+      },
+      {
+        "sku_code": "Garlic and Onion Clean Crackers [B]",
+        "product_name": "Garlic and Onion Clean Crackers",
+        "variant_code": "B",
+        "category": "Crackers",
+        "quantity": 1,
+        "outer_diameter_cm": 16.0,
+        "roll_height_cm": 22.0,
+        "has_core": true,
+        "is_rush_priority": false,
+        "baseline_freq": 0.010648148148148143,
+        "rush_freq": 0.0032535111649994943
+      },
+      {
+        "sku_code": "Maple & Olive Oil Quinoa Sprinkle [A]",
+        "product_name": "Maple & Olive Oil Quinoa Sprinkle",
+        "variant_code": "A",
+        "category": "Granola / sprinkle",
+        "quantity": 1,
+        "outer_diameter_cm": 12.5,
+        "roll_height_cm": 22.0,
+        "has_core": true,
+        "is_rush_priority": false,
+        "baseline_freq": 0.010648148148148143,
+        "rush_freq": 0.0032535111649994943
+      },
+      {
+        "sku_code": "Lemon and Rosemary Clean Bites [A]",
+        "product_name": "Lemon and Rosemary Clean Bites",
+        "variant_code": "A",
+        "category": "Bites",
+        "quantity": 1,
+        "outer_diameter_cm": 10.0,
+        "roll_height_cm": 24.3,
+        "has_core": true,
+        "is_rush_priority": true,
+        "baseline_freq": 0.010648148148148143,
+        "rush_freq": 0.016732343134283113
+      },
+      {
+        "sku_code": "Lemon and Rosemary Clean Bites [B]",
+        "product_name": "Lemon and Rosemary Clean Bites",
+        "variant_code": "B",
+        "category": "Bites",
+        "quantity": 4,
+        "outer_diameter_cm": 9.5,
+        "roll_height_cm": 8.0,
+        "has_core": true,
+        "is_rush_priority": true,
+        "baseline_freq": 0.025925925925925918,
+        "rush_freq": 0.04073961806608064
+      },
+      {
+        "sku_code": "Choco Chip Pumpkin Pie Clean Bites [A]",
+        "product_name": "Choco Chip Pumpkin Pie Clean Bites",
+        "variant_code": "A",
+        "category": "Bites",
+        "quantity": 2,
+        "outer_diameter_cm": 10.0,
+        "roll_height_cm": 17.8,
+        "has_core": true,
+        "is_rush_priority": true,
+        "baseline_freq": 0.015740740740740736,
+        "rush_freq": 0.02473476811154896
+      },
+      {
+        "sku_code": "Choco Chip Pumpkin Pie Clean Bites [B]",
+        "product_name": "Choco Chip Pumpkin Pie Clean Bites",
+        "variant_code": "B",
+        "category": "Bites",
+        "quantity": 1,
+        "outer_diameter_cm": 7.0,
+        "roll_height_cm": 24.3,
+        "has_core": false,
+        "is_rush_priority": true,
+        "baseline_freq": 0.010648148148148143,
+        "rush_freq": 0.016732343134283113
+      },
+      {
+        "sku_code": "Choco Chip Pumpkin Pie Clean Bites [C]",
+        "product_name": "Choco Chip Pumpkin Pie Clean Bites",
+        "variant_code": "C",
+        "category": "Bites",
+        "quantity": 3,
+        "outer_diameter_cm": 12.0,
+        "roll_height_cm": 8.0,
+        "has_core": true,
+        "is_rush_priority": true,
+        "baseline_freq": 0.020833333333333325,
+        "rush_freq": 0.03273719308881479
+      },
+      {
+        "sku_code": "Better Buckeyes Bites [A]",
+        "product_name": "Better Buckeyes Bites",
+        "variant_code": "A",
+        "category": "Bites",
+        "quantity": 1,
+        "outer_diameter_cm": 14.2,
+        "roll_height_cm": 12.0,
+        "has_core": true,
+        "is_rush_priority": true,
+        "baseline_freq": 0.010648148148148143,
+        "rush_freq": 0.016732343134283113
+      },
+      {
+        "sku_code": "Sweet + Spicy Granola [A]",
+        "product_name": "Sweet + Spicy Granola",
+        "variant_code": "A",
+        "category": "Granola / sprinkle",
+        "quantity": 1,
+        "outer_diameter_cm": 14.3,
+        "roll_height_cm": 22.1,
+        "has_core": true,
+        "is_rush_priority": false,
+        "baseline_freq": 0.010648148148148143,
+        "rush_freq": 0.0032535111649994943
+      },
+      {
+        "sku_code": "Sweet + Spicy Granola [B]",
+        "product_name": "Sweet + Spicy Granola",
+        "variant_code": "B",
+        "category": "Granola / sprinkle",
+        "quantity": 4,
+        "outer_diameter_cm": 12.0,
+        "roll_height_cm": 6.5,
+        "has_core": true,
+        "is_rush_priority": false,
+        "baseline_freq": 0.025925925925925918,
+        "rush_freq": 0.0079215924017379
+      },
+      {
+        "sku_code": "Cherry Bomb Clean Bites [A]",
+        "product_name": "Cherry Bomb Clean Bites",
+        "variant_code": "A",
+        "category": "Bites",
+        "quantity": 2,
+        "outer_diameter_cm": 9.3,
+        "roll_height_cm": 24.5,
+        "has_core": true,
+        "is_rush_priority": true,
+        "baseline_freq": 0.015740740740740736,
+        "rush_freq": 0.02473476811154896
+      },
+      {
+        "sku_code": "Cherry Bomb Clean Bites [B]",
+        "product_name": "Cherry Bomb Clean Bites",
+        "variant_code": "B",
+        "category": "Bites",
+        "quantity": 6,
+        "outer_diameter_cm": 13.0,
+        "roll_height_cm": 8.0,
+        "has_core": true,
+        "is_rush_priority": true,
+        "baseline_freq": 0.0361111111111111,
+        "rush_freq": 0.05674446802061231
+      },
+      {
+        "sku_code": "Brain Boost Brownie Bites [A]",
+        "product_name": "Brain Boost Brownie Bites",
+        "variant_code": "A",
+        "category": "Bites",
+        "quantity": 3,
+        "outer_diameter_cm": 13.2,
+        "roll_height_cm": 24.2,
+        "has_core": true,
+        "is_rush_priority": true,
+        "baseline_freq": 0.020833333333333325,
+        "rush_freq": 0.03273719308881479
+      },
+      {
+        "sku_code": "Rosemary Boost Clean Crackers [A]",
+        "product_name": "Rosemary Boost Clean Crackers",
+        "variant_code": "A",
+        "category": "Crackers",
+        "quantity": 1,
+        "outer_diameter_cm": 12.3,
+        "roll_height_cm": 22.0,
+        "has_core": true,
+        "is_rush_priority": false,
+        "baseline_freq": 0.010648148148148143,
+        "rush_freq": 0.0032535111649994943
+      },
+      {
+        "sku_code": "PB & J Clean Bites [A]",
+        "product_name": "PB & J Clean Bites",
+        "variant_code": "A",
+        "category": "Bites",
+        "quantity": 2,
+        "outer_diameter_cm": 12.0,
+        "roll_height_cm": 24.2,
+        "has_core": true,
+        "is_rush_priority": true,
+        "baseline_freq": 0.015740740740740736,
+        "rush_freq": 0.02473476811154896
+      },
+      {
+        "sku_code": "PB & J Clean Bites [B]",
+        "product_name": "PB & J Clean Bites",
+        "variant_code": "B",
+        "category": "Bites",
+        "quantity": 7,
+        "outer_diameter_cm": 10.0,
+        "roll_height_cm": 8.0,
+        "has_core": true,
+        "is_rush_priority": true,
+        "baseline_freq": 0.04120370370370369,
+        "rush_freq": 0.06474689299787814
+      },
+      {
+        "sku_code": "Cookie Dough Clean Bites [A]",
+        "product_name": "Cookie Dough Clean Bites",
+        "variant_code": "A",
+        "category": "Bites",
+        "quantity": 2,
+        "outer_diameter_cm": 13.5,
+        "roll_height_cm": 24.3,
+        "has_core": true,
+        "is_rush_priority": true,
+        "baseline_freq": 0.015740740740740736,
+        "rush_freq": 0.02473476811154896
+      },
+      {
+        "sku_code": "Cookie Dough Clean Bites [B]",
+        "product_name": "Cookie Dough Clean Bites",
+        "variant_code": "B",
+        "category": "Bites",
+        "quantity": 3,
+        "outer_diameter_cm": 15.0,
+        "roll_height_cm": 8.0,
+        "has_core": true,
+        "is_rush_priority": true,
+        "baseline_freq": 0.020833333333333325,
+        "rush_freq": 0.03273719308881479
+      },
+      {
+        "sku_code": "Orange Lavendar Clean Bites [A]",
+        "product_name": "Orange Lavendar Clean Bites",
+        "variant_code": "A",
+        "category": "Bites",
+        "quantity": 2,
+        "outer_diameter_cm": 11.3,
+        "roll_height_cm": 24.4,
+        "has_core": true,
+        "is_rush_priority": true,
+        "baseline_freq": 0.015740740740740736,
+        "rush_freq": 0.02473476811154896
+      },
+      {
+        "sku_code": "Orange Lavendar Clean Bites [B]",
+        "product_name": "Orange Lavendar Clean Bites",
+        "variant_code": "B",
+        "category": "Bites",
+        "quantity": 4,
+        "outer_diameter_cm": 9.0,
+        "roll_height_cm": 8.0,
+        "has_core": true,
+        "is_rush_priority": true,
+        "baseline_freq": 0.025925925925925918,
+        "rush_freq": 0.04073961806608064
+      },
+      {
+        "sku_code": "Chia Leah Macro Bowl [A]",
+        "product_name": "Chia Leah Macro Bowl",
+        "variant_code": "A",
+        "category": "Bowls",
+        "quantity": 3,
+        "outer_diameter_cm": 9.0,
+        "roll_height_cm": 8.0,
+        "has_core": true,
+        "is_rush_priority": false,
+        "baseline_freq": 0.020833333333333325,
+        "rush_freq": 0.006365565322825098
+      },
+      {
+        "sku_code": "Lemon Blueberry Pie Bowl [A]",
+        "product_name": "Lemon Blueberry Pie Bowl",
+        "variant_code": "A",
+        "category": "Bowls",
+        "quantity": 2,
+        "outer_diameter_cm": 9.2,
+        "roll_height_cm": 8.2,
+        "has_core": true,
+        "is_rush_priority": false,
+        "baseline_freq": 0.015740740740740736,
+        "rush_freq": 0.004809538243912296
+      },
+      {
+        "sku_code": "Chia Leah Fresh Salad [A]",
+        "product_name": "Chia Leah Fresh Salad",
+        "variant_code": "A",
+        "category": "Salad",
+        "quantity": 2,
+        "outer_diameter_cm": 11.0,
+        "roll_height_cm": 8.0,
+        "has_core": true,
+        "is_rush_priority": true,
+        "baseline_freq": 0.015740740740740736,
+        "rush_freq": 0.02473476811154896
+      },
+      {
+        "sku_code": "Roasted Beet Hummus [A]",
+        "product_name": "Roasted Beet Hummus",
+        "variant_code": "A",
+        "category": "Hummus",
+        "quantity": 1,
+        "outer_diameter_cm": 13.0,
+        "roll_height_cm": 8.3,
+        "has_core": true,
+        "is_rush_priority": false,
+        "baseline_freq": 0.010648148148148143,
+        "rush_freq": 0.0032535111649994943
+      },
+      {
+        "sku_code": "Roasted Beet Hummus [B]",
+        "product_name": "Roasted Beet Hummus",
+        "variant_code": "B",
+        "category": "Hummus",
+        "quantity": 1,
+        "outer_diameter_cm": 13.5,
+        "roll_height_cm": 8.5,
+        "has_core": true,
+        "is_rush_priority": false,
+        "baseline_freq": 0.010648148148148143,
+        "rush_freq": 0.0032535111649994943
+      },
+      {
+        "sku_code": "Peanut Butter & Banana Overnight Oats [A]",
+        "product_name": "Peanut Butter & Banana Overnight Oats",
+        "variant_code": "A",
+        "category": "Oats",
+        "quantity": 3,
+        "outer_diameter_cm": 9.5,
+        "roll_height_cm": 8.0,
+        "has_core": true,
+        "is_rush_priority": false,
+        "baseline_freq": 0.020833333333333325,
+        "rush_freq": 0.006365565322825098
+      },
+      {
+        "sku_code": "Sublime Mango [A]",
+        "product_name": "Sublime Mango",
+        "variant_code": "A",
+        "category": "Other",
+        "quantity": 3,
+        "outer_diameter_cm": 11.6,
+        "roll_height_cm": 8.0,
+        "has_core": true,
+        "is_rush_priority": false,
+        "baseline_freq": 0.020833333333333325,
+        "rush_freq": 0.006365565322825098
+      },
+      {
+        "sku_code": "Chia Leah Hand Crafted Soup [A]",
+        "product_name": "Chia Leah Hand Crafted Soup",
+        "variant_code": "A",
+        "category": "Soup",
+        "quantity": 3,
+        "outer_diameter_cm": 10.0,
+        "roll_height_cm": 8.0,
+        "has_core": true,
+        "is_rush_priority": false,
+        "baseline_freq": 0.020833333333333325,
+        "rush_freq": 0.006365565322825098
+      },
+      {
+        "sku_code": "Hummus Tumeric and Black Pepper [A]",
+        "product_name": "Hummus Tumeric and Black Pepper",
+        "variant_code": "A",
+        "category": "Hummus",
+        "quantity": 3,
+        "outer_diameter_cm": 8.0,
+        "roll_height_cm": 8.0,
+        "has_core": true,
+        "is_rush_priority": false,
+        "baseline_freq": 0.020833333333333325,
+        "rush_freq": 0.006365565322825098
+      },
+      {
+        "sku_code": "Pumpkin & Chocolate Chip Breakfast Cookie [A]",
+        "product_name": "Pumpkin & Chocolate Chip Breakfast Cookie",
+        "variant_code": "A",
+        "category": "Cookies",
+        "quantity": 1,
+        "outer_diameter_cm": 10.0,
+        "roll_height_cm": 8.0,
+        "has_core": true,
+        "is_rush_priority": true,
+        "baseline_freq": 0.010648148148148143,
+        "rush_freq": 0.016732343134283113
+      },
+      {
+        "sku_code": "Chocolate Chip Cherry Pie Bowl [A]",
+        "product_name": "Chocolate Chip Cherry Pie Bowl",
+        "variant_code": "A",
+        "category": "Bowls",
+        "quantity": 1,
+        "outer_diameter_cm": 10.0,
+        "roll_height_cm": 8.0,
+        "has_core": true,
+        "is_rush_priority": false,
+        "baseline_freq": 0.010648148148148143,
+        "rush_freq": 0.0032535111649994943
+      },
+      {
+        "sku_code": "Original Breakfast Cookie [A]",
+        "product_name": "Original Breakfast Cookie",
+        "variant_code": "A",
+        "category": "Cookies",
+        "quantity": 2,
+        "outer_diameter_cm": 15.0,
+        "roll_height_cm": 8.0,
+        "has_core": true,
+        "is_rush_priority": true,
+        "baseline_freq": 0.015740740740740736,
+        "rush_freq": 0.02473476811154896
+      },
+      {
+        "sku_code": "Original Breakfast Cookie [B]",
+        "product_name": "Original Breakfast Cookie",
+        "variant_code": "B",
+        "category": "Cookies",
+        "quantity": 2,
+        "outer_diameter_cm": 18.5,
+        "roll_height_cm": 14.0,
+        "has_core": true,
+        "is_rush_priority": true,
+        "baseline_freq": 0.015740740740740736,
+        "rush_freq": 0.02473476811154896
+      },
+      {
+        "sku_code": "Grain Free Brownie Bites [A]",
+        "product_name": "Grain Free Brownie Bites",
+        "variant_code": "A",
+        "category": "Bites",
+        "quantity": 2,
+        "outer_diameter_cm": 14.0,
+        "roll_height_cm": 7.0,
+        "has_core": true,
+        "is_rush_priority": true,
+        "baseline_freq": 0.015740740740740736,
+        "rush_freq": 0.02473476811154896
+      },
+      {
+        "sku_code": "Grain Free Brownie Bites [B]",
+        "product_name": "Grain Free Brownie Bites",
+        "variant_code": "B",
+        "category": "Bites",
+        "quantity": 1,
+        "outer_diameter_cm": 23.0,
+        "roll_height_cm": 7.5,
+        "has_core": true,
+        "is_rush_priority": true,
+        "baseline_freq": 0.010648148148148143,
+        "rush_freq": 0.016732343134283113
+      },
+      {
+        "sku_code": "Carrot Cake Clean Bites [A]",
+        "product_name": "Carrot Cake Clean Bites",
+        "variant_code": "A",
+        "category": "Bites",
+        "quantity": 4,
+        "outer_diameter_cm": 13.7,
+        "roll_height_cm": 8.0,
+        "has_core": true,
+        "is_rush_priority": true,
+        "baseline_freq": 0.025925925925925918,
+        "rush_freq": 0.04073961806608064
+      },
+      {
+        "sku_code": "Carrot Cake Clean Bites [B]",
+        "product_name": "Carrot Cake Clean Bites",
+        "variant_code": "B",
+        "category": "Bites",
+        "quantity": 2,
+        "outer_diameter_cm": 5.0,
+        "roll_height_cm": 24.3,
+        "has_core": true,
+        "is_rush_priority": true,
+        "baseline_freq": 0.015740740740740736,
+        "rush_freq": 0.02473476811154896
+      },
+      {
+        "sku_code": "Peppermint Kisses [A]",
+        "product_name": "Peppermint Kisses",
+        "variant_code": "A",
+        "category": "Bites",
+        "quantity": 3,
+        "outer_diameter_cm": 10.0,
+        "roll_height_cm": 12.0,
+        "has_core": true,
+        "is_rush_priority": true,
+        "baseline_freq": 0.020833333333333325,
+        "rush_freq": 0.03273719308881479
+      },
+      {
+        "sku_code": "Zucchini Breakfast Cookie [A]",
+        "product_name": "Zucchini Breakfast Cookie",
+        "variant_code": "A",
+        "category": "Cookies",
+        "quantity": 3,
+        "outer_diameter_cm": 11.0,
+        "roll_height_cm": 7.0,
+        "has_core": true,
+        "is_rush_priority": true,
+        "baseline_freq": 0.020833333333333325,
+        "rush_freq": 0.03273719308881479
+      },
+      {
+        "sku_code": "Braniac Cookies [A]",
+        "product_name": "Braniac Cookies",
+        "variant_code": "A",
+        "category": "Cookies",
+        "quantity": 1,
+        "outer_diameter_cm": 15.0,
+        "roll_height_cm": 8.0,
+        "has_core": true,
+        "is_rush_priority": false,
+        "baseline_freq": 0.010648148148148143,
+        "rush_freq": 0.0032535111649994943
+      },
+      {
+        "sku_code": "Sunny Chocolate Chip Breakfast Cookie [A]",
+        "product_name": "Sunny Chocolate Chip Breakfast Cookie",
+        "variant_code": "A",
+        "category": "Cookies",
+        "quantity": 2,
+        "outer_diameter_cm": 8.5,
+        "roll_height_cm": 8.0,
+        "has_core": true,
+        "is_rush_priority": true,
+        "baseline_freq": 0.015740740740740736,
+        "rush_freq": 0.02473476811154896
+      }
+    ]
+  },
+  "benchmarks": [
+    {
+      "exp_id": "ORI-258",
+      "name": "Top: Peg | Mid: 7D6_4P | Btm: 2B (90% fill, low cue)",
+      "row_configs": [
+        "7D6_4P",
+        "2B",
+        "SLIDING_PEG"
+      ],
+      "abc_colocation_mode": "cross_tier_height",
+      "overflow_mode": "all_colocated",
+      "cue_salience": 0.2,
+      "target_fill_ratio": 0.9,
+      "abc_same_drawer_pct": 0.05555555555555555
+    },
+    {
+      "exp_id": "ORI-255",
+      "name": "Top: Peg | Mid: 7D6_4P | Btm: 2B (height split)",
+      "row_configs": [
+        "7D6_4P",
+        "2B",
+        "SLIDING_PEG"
+      ],
+      "abc_colocation_mode": "cross_tier_height",
+      "overflow_mode": "hybrid_reserve",
+      "cue_salience": 0.9,
+      "target_fill_ratio": 0.8,
+      "abc_same_drawer_pct": 0.16666666666666666
+    },
+    {
+      "exp_id": "ORI-099",
+      "name": "Top: Peg | Mid: 7D6_3P | Btm: 1B_4D6_3P (low cue)",
+      "row_configs": [
+        "7D6_3P",
+        "1B_4D6_3P",
+        "SLIDING_PEG"
+      ],
+      "abc_colocation_mode": "adjacent_partition",
+      "overflow_mode": "hybrid_reserve",
+      "cue_salience": 0.2,
+      "target_fill_ratio": 0.8,
+      "abc_same_drawer_pct": 0.7777777777777778
+    },
+    {
+      "exp_id": "ORI-085",
+      "name": "Top: Peg | Mid: 7D6_3P | Btm: 1B_4D6_3P",
+      "row_configs": [
+        "7D6_3P",
+        "1B_4D6_3P",
+        "SLIDING_PEG"
+      ],
+      "abc_colocation_mode": "adjacent_partition",
+      "overflow_mode": "hybrid_reserve",
+      "cue_salience": 0.9,
+      "target_fill_ratio": 0.8,
+      "abc_same_drawer_pct": 0.7777777777777778
+    },
+    {
+      "exp_id": "ORI-245",
+      "name": "Top: Peg | Mid: 7D6_4P | Btm: 1D6_2B",
+      "row_configs": [
+        "7D6_4P",
+        "1D6_2B",
+        "SLIDING_PEG"
+      ],
+      "abc_colocation_mode": "adjacent_partition",
+      "overflow_mode": "hybrid_reserve",
+      "cue_salience": 0.9,
+      "target_fill_ratio": 0.8,
+      "abc_same_drawer_pct": 0.7777777777777778
+    },
+    {
+      "exp_id": "ORI-121",
+      "name": "Top: Peg | Mid: 5D9_4P | Btm: 5D9_4P",
+      "row_configs": [
+        "5D9_4P",
+        "5D9_4P",
+        "SLIDING_PEG"
+      ],
+      "abc_colocation_mode": "adjacent_partition",
+      "overflow_mode": "hybrid_reserve",
+      "cue_salience": 0.9,
+      "target_fill_ratio": 0.8,
+      "abc_same_drawer_pct": 1.0
+    },
+    {
+      "exp_id": "ORI-325",
+      "name": "Top: Peg | Mid: 1B_4D6_4P | Btm: 2B",
+      "row_configs": [
+        "1B_4D6_4P",
+        "2B",
+        "SLIDING_PEG"
+      ],
+      "abc_colocation_mode": "adjacent_partition",
+      "overflow_mode": "hybrid_reserve",
+      "cue_salience": 0.9,
+      "target_fill_ratio": 0.8,
+      "abc_same_drawer_pct": 0.6666666666666666
+    },
+    {
+      "exp_id": "ORI-021",
+      "name": "Top: Peg | Mid: 7D6_4P | Btm: 1B_4D6_3P",
+      "row_configs": [
+        "7D6_4P",
+        "1B_4D6_3P",
+        "SLIDING_PEG"
+      ],
+      "abc_colocation_mode": "adjacent_partition",
+      "overflow_mode": "hybrid_reserve",
+      "cue_salience": 0.9,
+      "target_fill_ratio": 0.8,
+      "abc_same_drawer_pct": 0.7777777777777778
+    },
+    {
+      "exp_id": "ORI-CHAMP",
+      "name": "Champion ORI-261 (TOPO-053)",
+      "row_configs": [
+        "3D9_3D6_4P",
+        "3D9_3D6_4P",
+        "SLIDING_PEG"
+      ],
+      "abc_colocation_mode": "adjacent_partition",
+      "overflow_mode": "hybrid_reserve",
+      "cue_salience": 0.9,
+      "target_fill_ratio": 0.8,
+      "abc_same_drawer_pct": 0.8888888888888888
+    }
+  ],
+  "markov_details": {
+    "ORI-258": {
+      "transition_matrix": [
+        [
+          0.79515,
+          0.06461220179245526,
+          0.03558353142193187,
+          0.03981609884369851,
+          0.009364087216297862,
+          0.05547408072561649
+        ],
+        [
+          0.02673238886401131,
+          0.6228912711270328,
+          0.03893070444543955,
+          0.0,
+          0.0,
+          0.3114456355635164
+        ],
+        [
+          0.023416742315336032,
+          0.0,
+          0.6640766152255715,
+          0.0,
+          0.0,
+          0.3125066424590925
+        ],
+        [
+          0.021602265314720853,
+          0.0,
+          0.03913590938741117,
+          0.6261745501985787,
+          0.0,
+          0.31308727509928935
+        ],
+        [
+          0.02798891184149392,
+          0.0,
+          0.03888044352634024,
+          0.0,
+          0.622087096421444,
+          0.31104354821072194
+        ],
+        [
+          0.020151228298584907,
+          0.0,
+          0.15884263581863162,
+          0.0,
+          0.0,
+          0.8210061358827835
+        ]
+      ],
+      "stationary_dist": [
+        0.09439762197968338,
+        0.01617368608334124,
+        0.29060947259664227,
+        0.010054278137964459,
+        0.0023390245658683265,
+        0.5864259166365003
+      ],
+      "sim_stationary_dist": [
+        0.09481692307692308,
+        0.016178461538461537,
+        0.28991692307692307,
+        0.009924615384615384,
+        0.002269230769230769,
+        0.5868938461538461
+      ],
+      "spectral_gap": 0.2239305175140821,
+      "mixing_time_95": 11.816867912277488,
+      "mfpt_home_to_any_misplaced": 4.88162069807176,
+      "mfpt_misplaced_to_home": 47.05464405845966,
+      "total_variation_distance": 0.0008920060697057918
+    },
+    "ORI-255": {
+      "transition_matrix": [
+        [
+          0.8376138307023662,
+          0.04394738818764532,
+          0.03752810676697803,
+          0.041991976308734365,
+          0.009875817570257376,
+          0.02904288046401877
+        ],
+        [
+          0.14106856040744045,
+          0.6376113955195084,
+          0.03435725758370239,
+          0.0,
+          0.0,
+          0.18696278648934883
+        ],
+        [
+          0.12323906808199764,
+          0.0,
+          0.6860331552080531,
+          0.0,
+          0.0,
+          0.19072777670994942
+        ],
+        [
+          0.11350806393907217,
+          0.0,
+          0.03545967744243712,
+          0.6582489398067296,
+          0.0,
+          0.1927833188117612
+        ],
+        [
+          0.14784215927865815,
+          0.0,
+          0.03408631362885368,
+          0.0,
+          0.632538659687908,
+          0.18553286740458014
+        ],
+        [
+          0.09057211234650002,
+          0.0,
+          0.14745794204759952,
+          0.0,
+          0.0,
+          0.7619699456059006
+        ]
+      ],
+      "stationary_dist": [
+        0.40017131802742173,
+        0.048529352296064,
+        0.1977617779443447,
+        0.049170248357208755,
+        0.010754924396486822,
+        0.293612378978474
+      ],
+      "sim_stationary_dist": [
+        0.4002276923076923,
+        0.04976,
+        0.19667846153846155,
+        0.049186153846153845,
+        0.010907692307692307,
+        0.29324
+      ],
+      "spectral_gap": 0.2510955891564812,
+      "mixing_time_95": 10.360695844063844,
+      "mfpt_home_to_any_misplaced": 6.158159924119666,
+      "mfpt_misplaced_to_home": 9.51545290153204,
+      "total_variation_distance": 0.0014556953843571337
+    },
+    "ORI-099": {
+      "transition_matrix": [
+        [
+          0.9173222656159166,
+          0.029589599025582308,
+          0.020518335090732257,
+          0.016479462814977593,
+          0.005399561865982173,
+          0.010690775586809123
+        ],
+        [
+          0.03767578071047117,
+          0.7892511965576868,
+          0.038492968771581156,
+          0.0,
+          0.0,
+          0.13458005396026085
+        ],
+        [
+          0.03284741308963234,
+          0.0,
+          0.831908595684856,
+          0.0,
+          0.0,
+          0.13524399122551173
+        ],
+        [
+          0.030217312062562864,
+          0.0,
+          0.038791307517497486,
+          0.7953856736678384,
+          0.0,
+          0.13560570675210132
+        ],
+        [
+          0.03951342397093509,
+          0.0,
+          0.0384194630411626,
+          0.0,
+          0.7877397125422975,
+          0.1343274004456049
+        ],
+        [
+          0.020356437099720005,
+          0.0,
+          0.15881219782702397,
+          0.0,
+          0.0,
+          0.820831365073256
+        ]
+      ],
+      "stationary_dist": [
+        0.24990905305932415,
+        0.0350877848514688,
+        0.35744019538711336,
+        0.020127461360314642,
+        0.006357286183981726,
+        0.3310782191577974
+      ],
+      "sim_stationary_dist": [
+        0.24991230769230768,
+        0.03432307692307692,
+        0.35859384615384615,
+        0.020056923076923076,
+        0.006081538461538461,
+        0.3310323076923077
+      ],
+      "spectral_gap": 0.10675066461308413,
+      "mixing_time_95": 26.53684868438201,
+      "mfpt_home_to_any_misplaced": 12.095154849725942,
+      "mfpt_misplaced_to_home": 36.999362861050344,
+      "total_variation_distance": 0.001156905399716376
+    },
+    "ORI-085": {
+      "transition_matrix": [
+        [
+          0.9259528770024102,
+          0.026500782765988076,
+          0.01837645520269246,
+          0.014759195073320366,
+          0.004835909263866437,
+          0.00957478069172253
+        ],
+        [
+          0.17236673293870458,
+          0.6784914959318382,
+          0.03310533068245182,
+          0.0,
+          0.0,
+          0.11603644044700549
+        ],
+        [
+          0.1502444712982047,
+          0.0,
+          0.730668696010862,
+          0.0,
+          0.0,
+          0.11908683269093331
+        ],
+        [
+          0.13819653579738622,
+          0.0,
+          0.03447213856810455,
+          0.7065830252391465,
+          0.0,
+          0.12074830039536277
+        ],
+        [
+          0.180787899667225,
+          0.0,
+          0.032768484013311,
+          0.0,
+          0.6715682222846792,
+          0.11487539403478489
+        ],
+        [
+          0.09160396694874001,
+          0.0,
+          0.14730489022160784,
+          0.0,
+          0.0,
+          0.7610911428296522
+        ]
+      ],
+      "stationary_dist": [
+        0.638840774436835,
+        0.052657333697826346,
+        0.13014594769695897,
+        0.032134390378706384,
+        0.009406446723046753,
+        0.13681510706662653
+      ],
+      "sim_stationary_dist": [
+        0.6385738461538462,
+        0.05198,
+        0.13032153846153846,
+        0.03261076923076923,
+        0.009346153846153846,
+        0.1371676923076923
+      ],
+      "spectral_gap": 0.18363819070540266,
+      "mixing_time_95": 14.764747602157424,
+      "mfpt_home_to_any_misplaced": 13.504913621459002,
+      "mfpt_misplaced_to_home": 8.054689410597513,
+      "total_variation_distance": 0.001004554857708075
+    },
+    "ORI-245": {
+      "transition_matrix": [
+        [
+          0.9241468619437692,
+          0.01859476224198944,
+          0.019201113184663006,
+          0.02300091242541737,
+          0.005052924522279739,
+          0.010003425681881312
+        ],
+        [
+          0.17074785918820248,
+          0.6798230072802136,
+          0.0331700856324719,
+          0.0,
+          0.0,
+          0.11625904789911196
+        ],
+        [
+          0.14879626988116568,
+          0.0,
+          0.7319179509815621,
+          0.0,
+          0.0,
+          0.11928577913727229
+        ],
+        [
+          0.1368441002645088,
+          0.0,
+          0.03452623598941965,
+          0.7076956962136872,
+          0.0,
+          0.12093396753238433
+        ],
+        [
+          0.17910586760955988,
+          0.0,
+          0.0328357652956176,
+          0.0,
+          0.6729516115717941,
+          0.11510675552302838
+        ],
+        [
+          0.09087080709978002,
+          0.0,
+          0.14741363757165454,
+          0.0,
+          0.0,
+          0.7617155553285655
+        ]
+      ],
+      "stationary_dist": [
+        0.6281239717316616,
+        0.03647924797353046,
+        0.1348299446393496,
+        0.049425972450501385,
+        0.009704567067424605,
+        0.14143629613753242
+      ],
+      "sim_stationary_dist": [
+        0.6279015384615385,
+        0.03579692307692308,
+        0.13475076923076923,
+        0.050006153846153846,
+        0.009535384615384616,
+        0.14200923076923078
+      ],
+      "spectral_gap": 0.1861145016879956,
+      "mixing_time_95": 14.54693819032156,
+      "mfpt_home_to_any_misplaced": 13.183370202280729,
+      "mfpt_misplaced_to_home": 8.170247641595447,
+      "total_variation_distance": 0.00115311602735081
+    },
+    "ORI-121": {
+      "transition_matrix": [
+        [
+          0.9577826373272378,
+          0.014580316556776295,
+          0.015055761661888564,
+          0.0007924085085204508,
+          0.003962042542602254,
+          0.007826833402974735
+        ],
+        [
+          0.183244700209383,
+          0.6697610304521897,
+          0.03267021199162468,
+          0.0,
+          0.0,
+          0.11432405734680268
+        ],
+        [
+          0.15962797003915868,
+          0.0,
+          0.7227617490911417,
+          0.0,
+          0.0,
+          0.11761028086969964
+        ],
+        [
+          0.14677360276045914,
+          0.0,
+          0.034129055889581636,
+          0.6996983672502056,
+          0.0,
+          0.11939897409975368
+        ],
+        [
+          0.1922395581271412,
+          0.0,
+          0.032310417674914355,
+          0.0,
+          0.6623775636677846,
+          0.11307246053015994
+        ],
+        [
+          0.09192981577050001,
+          0.0,
+          0.14725655806603152,
+          0.0,
+          0.0,
+          0.7608136261634685
+        ]
+      ],
+      "stationary_dist": [
+        0.7646031562322675,
+        0.0337578453367926,
+        0.09669753718592822,
+        0.002017564943261052,
+        0.008972715990412812,
+        0.09395118031133791
+      ],
+      "sim_stationary_dist": [
+        0.7644953846153846,
+        0.03460615384615385,
+        0.09608307692307692,
+        0.0019076923076923077,
+        0.009138461538461538,
+        0.09376923076923077
+      ],
+      "spectral_gap": 0.16105305995948127,
+      "mixing_time_95": 17.059219424342164,
+      "mfpt_home_to_any_misplaced": 23.68693676464967,
+      "mfpt_misplaced_to_home": 7.732707425597869,
+      "total_variation_distance": 0.0010140540574100304
+    },
+    "ORI-325": {
+      "transition_matrix": [
+        [
+          0.8985938613891631,
+          0.022599313426853253,
+          0.023336247560337593,
+          0.03716604479872714,
+          0.0061411177790362086,
+          0.012163415045882722
+        ],
+        [
+          0.16082111657739573,
+          0.6878284689946741,
+          0.03356715533690417,
+          0.0,
+          0.0,
+          0.11778325909102605
+        ],
+        [
+          0.1401716541391829,
+          0.0,
+          0.7392199330629684,
+          0.0,
+          0.0,
+          0.12060841279784873
+        ],
+        [
+          0.12892649943637782,
+          0.0,
+          0.03484294002254489,
+          0.7140833192245659,
+          0.0,
+          0.12214724131651143
+        ],
+        [
+          0.1686820803359349,
+          0.0,
+          0.03325271678656261,
+          0.0,
+          0.6813572322827616,
+          0.11670797059474099
+        ],
+        [
+          0.0897574902921,
+          0.0,
+          0.1475787724365403,
+          0.0,
+          0.0,
+          0.7626637372713597
+        ]
+      ],
+      "stationary_dist": [
+        0.5457651371029695,
+        0.03951006471063858,
+        0.1617854696566098,
+        0.07094350522026349,
+        0.010518387128796767,
+        0.17147743618072198
+      ],
+      "sim_stationary_dist": [
+        0.545976923076923,
+        0.03901538461538462,
+        0.16074153846153846,
+        0.0726523076923077,
+        0.010027692307692307,
+        0.17158615384615383
+      ],
+      "spectral_gap": 0.20505630339136605,
+      "mixing_time_95": 13.054210417845256,
+      "mfpt_home_to_any_misplaced": 9.86133594769512,
+      "mfpt_misplaced_to_home": 8.535588434354825,
+      "total_variation_distance": 0.002029306111429689
+    },
+    "ORI-021": {
+      "transition_matrix": [
+        [
+          0.9345834883889037,
+          0.017818086415889445,
+          0.01839911097292932,
+          0.014777391234047444,
+          0.004841871308665611,
+          0.009580051679564477
+        ],
+        [
+          0.1751924526802889,
+          0.6762276073540854,
+          0.03299230189278845,
+          0.0,
+          0.0,
+          0.11558763807283728
+        ],
+        [
+          0.1526755836930639,
+          0.0,
+          0.7286237114398723,
+          0.0,
+          0.0,
+          0.11870070486706398
+        ],
+        [
+          0.14041516731323953,
+          0.0,
+          0.03438339330747042,
+          0.7048055189730202,
+          0.0,
+          0.12039592040626977
+        ],
+        [
+          0.1837653914652421,
+          0.0,
+          0.03264938434139032,
+          0.0,
+          0.6691827381290198,
+          0.11440248606434787
+        ],
+        [
+          0.09160396694874001,
+          0.0,
+          0.14730489022160784,
+          0.0,
+          0.0,
+          0.7610911428296522
+        ]
+      ],
+      "stationary_dist": [
+        0.6675253485616516,
+        0.036735758253718144,
+        0.12459138070223656,
+        0.03341621835212377,
+        0.009769961261175636,
+        0.12796133286909436
+      ],
+      "sim_stationary_dist": [
+        0.6668630769230769,
+        0.03651846153846154,
+        0.1250276923076923,
+        0.033938461538461535,
+        0.009716923076923076,
+        0.12793538461538462
+      ],
+      "spectral_gap": 0.17856861400805224,
+      "mixing_time_95": 15.229423899727411,
+      "mfpt_home_to_any_misplaced": 15.286660437429603,
+      "mfpt_misplaced_to_home": 8.000566599979347,
+      "total_variation_distance": 0.000958554791793553
+    },
+    "ORI-CHAMP": {
+      "transition_matrix": [
+        [
+          0.9676415710623283,
+          0.011175405267454057,
+          0.011539820656610165,
+          0.0006073589819268508,
+          0.0030367949096342544,
+          0.005999049122046523
+        ],
+        [
+          0.1864725786983443,
+          0.6671749437127946,
+          0.03254109685206623,
+          0.0,
+          0.0,
+          0.11381138073679495
+        ],
+        [
+          0.16240508034069667,
+          0.0,
+          0.720425720912081,
+          0.0,
+          0.0,
+          0.1171691987472223
+        ],
+        [
+          0.14930799173030768,
+          0.0,
+          0.0340276803307877,
+          0.6976678850837273,
+          0.0,
+          0.1189964428551773
+        ],
+        [
+          0.1956408089958807,
+          0.0,
+          0.03217436764016477,
+          0.0,
+          0.6596525757851602,
+          0.11253224757879436
+        ],
+        [
+          0.09192981577050001,
+          0.0,
+          0.14725655806603152,
+          0.0,
+          0.0,
+          0.7608136261634685
+        ]
+      ],
+      "stationary_dist": [
+        0.811051483891282,
+        0.02723301282170773,
+        0.07741227190031716,
+        0.0016293320465901892,
+        0.007236714141187742,
+        0.07543718519891505
+      ],
+      "sim_stationary_dist": [
+        0.8114430769230769,
+        0.027413846153846153,
+        0.0770523076923077,
+        0.0016353846153846154,
+        0.007053846153846154,
+        0.07540153846153846
+      ],
+      "spectral_gap": 0.15396421391170811,
+      "mixing_time_95": 17.91774275781195,
+      "mfpt_home_to_any_misplaced": 30.903848945391754,
+      "mfpt_misplaced_to_home": 7.647534013623692,
+      "total_variation_distance": 0.0005784789327277063
+    }
+  }
+}
