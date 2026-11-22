@@ -8,7 +8,7 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Dict, List, Optional, Sequence, Tuple
 
-from sim_config import (
+from src.sim_config import (
     DEFAULT_CSV_PATH,
     ExperimentScenario,
     RollItem,
@@ -16,7 +16,7 @@ from sim_config import (
     get_execution_config,
     load_roll_inventory,
 )
-from simulation_engine import (
+from src.simulation_engine import (
     ExperimentSummary,
     allocate_home_slots,
     compute_layout_metrics,
@@ -24,17 +24,26 @@ from simulation_engine import (
 )
 
 LOWER_SHELF_LAYOUTS: Tuple[str, ...] = (
-    "7D_4P",
-    "7D_3P",
-    "4D4P_3D3P",
-    "1B_4D_4P",
-    "1B_4D_3P",
-    "1B_2D4P_2D3P",
-    "1D_2B",
-    "1B_1D_1B",
-    "2B_1D",
+    "7D6_4P",
+    "7D6_3P",
+    "5D9_4P",
+    "5D9_3P",
+    "3D9_3D6_4P",
+    "1B_4D6_4P",
+    "1B_4D6_3P",
+    "1B_3D9_4P",
+    "1B_3D9_3P",
+    "1D6_2B",
+    "1B_1D6_1B",
+    "2B_1D6",
     "2B",
 )
+
+_ALL_LABEL_FIT_LAYOUTS = {
+    "5D9_4P", "5D9_3P", "3D9_3D6_4P",
+    "1B_4D6_4P", "1B_4D6_3P", "1B_3D9_4P", "1B_3D9_3P",
+    "1D6_2B", "1B_1D6_1B", "2B_1D6", "2B",
+}
 
 MODULAR_TOPOLOGIES: List[Tuple[str, str, Tuple[str, str, str]]] = [
     (
@@ -43,7 +52,12 @@ MODULAR_TOPOLOGIES: List[Tuple[str, str, Tuple[str, str, str]]] = [
         (mid, btm, "SLIDING_PEG"),
     )
     for idx, (mid, btm) in enumerate(
-        [(m, b) for m in LOWER_SHELF_LAYOUTS for b in LOWER_SHELF_LAYOUTS],
+        [
+            (m, b)
+            for m in LOWER_SHELF_LAYOUTS
+            for b in LOWER_SHELF_LAYOUTS
+            if (m in _ALL_LABEL_FIT_LAYOUTS or b in _ALL_LABEL_FIT_LAYOUTS)
+        ],
         start=1,
     )
 ]
@@ -97,11 +111,11 @@ def _init_search_worker() -> None:
 
 
 def build_orientation_scenarios() -> List[Tuple[str, str, ExperimentScenario]]:
-    """Build all (100 topologies x 5 policies = 500) candidate scenarios."""
+    """Build all feasible (topologies x 5 policies) candidate scenarios."""
     candidates: List[Tuple[str, str, ExperimentScenario]] = []
     ori_num = 1
     for t_idx, (topo_id, topo_label, row_cfgs) in enumerate(MODULAR_TOPOLOGIES):
-        p_eye = 3 if row_cfgs[0] in ("7D_3P", "1B_4D_3P") else 4
+        p_eye = 3 if row_cfgs[0].endswith("_3P") else 4
         for p_idx, (abc_mode, ov_mode, sp_mode) in enumerate(POSITIONING_POLICIES):
             ori_id = f"ORI-{ori_num:03d}"
             seed = 1000 + t_idx * 31 + p_idx * 7

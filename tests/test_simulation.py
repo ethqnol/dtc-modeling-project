@@ -6,9 +6,9 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
-from markov_analysis import analyze_scenario_markov, build_scenario_transition_matrix, run_all_markov_analyses
-from orientation_search import MODULAR_TOPOLOGIES, build_orientation_scenarios
-from sim_config import (
+from src.markov_analysis import analyze_scenario_markov, build_scenario_transition_matrix, run_all_markov_analyses
+from src.orientation_search import MODULAR_TOPOLOGIES, build_orientation_scenarios
+from src.sim_config import (
     DEFAULT_CONFIG_PATH,
     DEFAULT_CSV_PATH,
     BehavioralConfig,
@@ -22,7 +22,7 @@ from sim_config import (
     save_config_file,
     set_active_config,
 )
-from simulation_engine import (
+from src.simulation_engine import (
     allocate_home_slots,
     compute_layout_metrics,
     create_shelf_slots,
@@ -119,37 +119,76 @@ class TestLabelShelfSimulation(unittest.TestCase):
             self.assertAlmostEqual(val, 0.90, places=6)
 
         valid_lower_rows = {
-            "7D_4P", "7D_3P", "4D4P_3D3P", "1B_4D_4P", "1B_4D_3P", "1B_2D4P_2D3P", "1D_2B", "1B_1D_1B", "2B_1D", "2B"
+            "7D6_4P", "7D6_3P", "5D9_4P", "5D9_3P", "3D9_3D6_4P",
+            "1B_4D6_4P", "1B_4D6_3P", "1B_3D9_4P", "1B_3D9_3P",
+            "1D6_2B", "1B_1D6_1B", "2B_1D6", "2B",
         }
         candidates = build_orientation_scenarios()
-        self.assertEqual(len(MODULAR_TOPOLOGIES), 100)
+        self.assertEqual(len(MODULAR_TOPOLOGIES), 165)
         for _, _, row_cfgs in MODULAR_TOPOLOGIES:
             self.assertIn(row_cfgs[0], valid_lower_rows)
             self.assertIn(row_cfgs[1], valid_lower_rows)
             self.assertEqual(row_cfgs[2], "SLIDING_PEG")
-        self.assertEqual(len(candidates), 500)
+        self.assertEqual(len(candidates), 825)
 
-        # Verify 7-drawer shelf, tight 1B+4D bay, & 32-peg Top Sliding Peg capacity
-        ori_bin = next(s for _, _, s in candidates if s.row_configs == ("7D_4P", "1B_4D_4P", "SLIDING_PEG"))
+        # Verify 6in 7-drawer shelf, tight 1B+4D6 bay, & 32-peg Top Sliding Peg capacity
+        ori_bin = next(s for _, _, s in candidates if s.row_configs == ("7D6_4P", "1B_4D6_4P", "SLIDING_PEG"))
         slots_001 = create_shelf_slots(ori_bin)
         mid_drw_slots = [s for s in slots_001 if s.tier_index == 1 and "drawer" in s.mechanism_id]
         btm_drw_slots = [s for s in slots_001 if s.tier_index == 2 and "drawer" in s.mechanism_id]
         btm_bin_slots = [s for s in slots_001 if s.tier_index == 2 and "wire_bin" in s.mechanism_id]
         peg_slots = [s for s in slots_001 if "pegboard" in s.mechanism_id]
-        self.assertEqual(len(mid_drw_slots), 28)   # 7 drawers x 4 partitions
-        self.assertEqual(len(btm_drw_slots), 16)   # 4 drawers x 4 partitions
-        self.assertEqual(len(btm_bin_slots), 4)    # 1 wire bin x 4 sub-zones (20 slots on Btm bay)
+        self.assertEqual(len(mid_drw_slots), 28)   # 7 x 6in drawers x 4 partitions
+        self.assertEqual(len(btm_drw_slots), 16)   # 4 x 6in drawers x 4 partitions
+        self.assertEqual(len(btm_bin_slots), 4)    # 1 wire bin x 4 sub-zones
         self.assertEqual(len(peg_slots), 32)       # 8 rows x 4 pins
         self.assertEqual(sum(s.max_rolls_hard for s in peg_slots), 64)
 
-        # Verify 3P (2:1:1) drawer topology: 7 x 3 = 21 Btm compartments with 2:1:1 capacity split
-        ori_3p = next(s for _, _, s in candidates if s.row_configs == ("7D_4P", "7D_3P", "SLIDING_PEG"))
+        # Verify 9in drawer configuration: 5 drawers on Mid (20 slots) + 3 drawers beside 1 bin on Btm (12 slots), fits all labels (23.0 cm OD)
+        ori_9in = next(s for _, _, s in candidates if s.row_configs == ("5D9_4P", "1B_3D9_4P", "SLIDING_PEG"))
+        slots_9in = create_shelf_slots(ori_9in)
+        mid_9_slots = [s for s in slots_9in if s.tier_index == 1 and "drawer" in s.mechanism_id]
+        btm_9_slots = [s for s in slots_9in if s.tier_index == 2 and "drawer" in s.mechanism_id]
+        self.assertEqual(len(mid_9_slots), 20)
+        self.assertEqual(len(btm_9_slots), 12)
+        for s in mid_9_slots + btm_9_slots:
+            self.assertAlmostEqual(s.max_od_cm, 23.0)
+            self.assertEqual(s.max_rolls_hard, 8)
+
+        # Verify 3D9_3D6_4P intra-row mix: 3 x 9in (12 slots, 23.0 cm) + 3 x 6in (12 slots, 14.0 cm)
+        ori_mix = next(s for _, _, s in candidates if s.row_configs == ("3D9_3D6_4P", "1B_3D9_4P", "SLIDING_PEG"))
+        mid_mix_slots = [s for s in create_shelf_slots(ori_mix) if s.tier_index == 1]
+        self.assertEqual(len(mid_mix_slots), 24)
+        self.assertEqual(sum(1 for s in mid_mix_slots if abs(s.max_od_cm - 23.0) < 1e-6), 12)
+        self.assertEqual(sum(1 for s in mid_mix_slots if abs(s.max_od_cm - 14.0) < 1e-6), 12)
+
+        # Verify 3P (2:1:1) drawer topology: 4 x 3 = 12 Btm drawer compartments with 2:1:1 capacity split beside 1 bin
+        ori_3p = next(s for _, _, s in candidates if s.row_configs == ("7D6_4P", "1B_4D6_3P", "SLIDING_PEG"))
         slots_061 = create_shelf_slots(ori_3p)
         btm_3p_slots = [s for s in slots_061 if s.tier_index == 2 and "drawer" in s.mechanism_id]
-        self.assertEqual(len(btm_3p_slots), 21)
+        self.assertEqual(len(btm_3p_slots), 12)
         for s in btm_3p_slots:
             self.assertEqual(s.partition_count, 3)
             self.assertEqual(s.max_rolls_hard, 10 if s.sub_idx == 0 else 6)
+            self.assertAlmostEqual(s.max_od_cm, 14.0)
+
+        # Verify 6in-only drawer topology fails because >15.24 cm OD rolls cannot fit 6in drawers (14.0 cm) or pegs (15.24 cm)
+        no_bin = ExperimentScenario(
+            exp_id="NO-BIN", name="NO-BIN", topology="M_modular", strategy="C_hybrid",
+            drawer_partitions=4, cue_salience=0.9, target_fill_ratio=0.8,
+            row_configs=("7D6_4P", "7D6_4P", "SLIDING_PEG"),
+        )
+        with self.assertRaises(RuntimeError):
+            allocate_home_slots(no_bin, variants, [
+                RollItem(
+                    roll_id=r.roll_id, variant_id=r.variant_id, sku_code=r.sku_code,
+                    product_name=r.product_name, variant_code=r.variant_code, copy_index=r.copy_index,
+                    outer_diameter_cm=r.outer_diameter_cm, roll_height_cm=r.roll_height_cm,
+                    has_core=r.has_core, category=r.category, is_rush_priority=r.is_rush_priority,
+                    visual_similarity_group=r.visual_similarity_group,
+                )
+                for r in base_rolls
+            ])
 
         # Verify flush 1D_2B, 1B_1D_1B, and 2B_1D bottom configurations produce 4 drawer + 8 bin slots with unique IDs
         for btm_code in ("1D_2B", "1B_1D_1B", "2B_1D"):
@@ -204,7 +243,7 @@ class TestLabelShelfSimulation(unittest.TestCase):
                     self.assertNotIn("peg", r.home_mechanism)
 
         # Verify modular champion scenario is valid for both simulation and Markov chain
-        champ = next(s for _, _, s in candidates if s.row_configs == ("7D_4P", "7D_4P", "SLIDING_PEG"))
+        champ = next(s for _, _, s in candidates if s.row_configs == ("7D6_4P", "1B_4D6_4P", "SLIDING_PEG"))
         mr = run_all_markov_analyses([champ])[0]
         self.assertLess(mr.max_row_sum_error, 1e-12)
         self.assertLess(mr.total_variation_distance, 0.01)
@@ -214,8 +253,8 @@ class TestLabelShelfSimulation(unittest.TestCase):
         yaml_cfg = load_config_dict(DEFAULT_CONFIG_PATH)
         self.assertIn("behavioral_weights", yaml_cfg)
         self.assertNotIn("geometry", yaml_cfg)
-        self.assertAlmostEqual(yaml_cfg["behavioral_weights"]["bin_dump_error_penalty"], 0.09)
-        self.assertAlmostEqual(yaml_cfg["behavioral_weights"]["mech_diversity_penalty"], 0.08)
+        self.assertAlmostEqual(yaml_cfg["behavioral_weights"]["bin_dump_error_penalty"], 0.11)
+        self.assertAlmostEqual(yaml_cfg["behavioral_weights"]["mech_diversity_penalty"], 0.10)
 
         # 2) Temporary JSON & TOON overrides load cleanly and restore default cleanly
         with tempfile.TemporaryDirectory() as tmp:
@@ -232,10 +271,10 @@ class TestLabelShelfSimulation(unittest.TestCase):
                 toon_cfg = load_config_dict(toon_path)
                 self.assertAlmostEqual(toon_cfg["behavioral_weights"]["bin_dump_error_penalty"], 0.25)
                 set_active_config(toon_path)
-                self.assertAlmostEqual(make_behavioral_config().mech_diversity_penalty, 0.08)
+                self.assertAlmostEqual(make_behavioral_config().mech_diversity_penalty, 0.10)
             finally:
                 set_active_config(None)
-        self.assertAlmostEqual(make_behavioral_config().bin_dump_error_penalty, 0.09)
+        self.assertAlmostEqual(make_behavioral_config().bin_dump_error_penalty, 0.11)
 
         # 3) Complexity counters across 2-style uniform vs mixed shelves
         self.assertEqual(count_shelf_complexity(("7D_4P", "7D_4P", "SLIDING_PEG")), (0, 0))

@@ -8,16 +8,16 @@ from concurrent.futures import ProcessPoolExecutor
 from pathlib import Path
 from typing import Dict, List, Optional, Tuple
 
-from generate_charts import (
+from src.generate_charts import (
     plot_fig1_entropy_decay,
     plot_fig2_cross_tier_contamination,
     plot_fig3_slot_heatmap,
     plot_fig4_capacity_and_partitions,
     plot_fig5_orientation_search_pareto,
 )
-from markov_analysis import run_all_markov_analyses
-from orientation_search import run_orientation_search, summarize_by_dimension
-from sim_config import (
+from src.markov_analysis import run_all_markov_analyses
+from src.orientation_search import run_orientation_search, summarize_by_dimension
+from src.sim_config import (
     DEFAULT_CSV_PATH,
     ExperimentScenario,
     build_default_experiments,
@@ -26,7 +26,7 @@ from sim_config import (
     save_config_file,
     set_active_config,
 )
-from simulation_engine import (
+from src.simulation_engine import (
     ExperimentSummary,
     allocate_home_slots,
     run_experiment_monte_carlo,
@@ -49,24 +49,24 @@ def run_capacity_sweep(
 ) -> Dict[str, List[Tuple[float, float, float]]]:
     """Sweep target fill ratio rho across core modular 120x60x60 cm layout architectures."""
     configs = {
-        "TOPO001_Mid7D4P_Btm7D4P": (
-            ("7D_4P", "7D_4P", "SLIDING_PEG"),
+        "TOPO053_Mid3D93D64P_Btm3D93D64P": (
+            ("3D9_3D6_4P", "3D9_3D6_4P", "SLIDING_PEG"),
             "adjacent_partition",
             "hybrid_reserve",
             "center_out",
             4,
             0.90,
         ),
-        "TOPO07_Mid7D4P_Btm2B": (
-            ("7D_4P", "2B", "SLIDING_PEG"),
+        "TOPO007_Mid7D64P_Btm2B": (
+            ("7D6_4P", "2B", "SLIDING_PEG"),
             "adjacent_partition",
             "hybrid_reserve",
             "center_out",
             4,
             0.90,
         ),
-        "TOPO07_BaselineCOI": (
-            ("7D_4P", "2B", "SLIDING_PEG"),
+        "TOPO007_BaselineCOI": (
+            ("7D6_4P", "2B", "SLIDING_PEG"),
             "cross_tier_height",
             "all_colocated",
             "random_perm",
@@ -216,7 +216,7 @@ def main(argv: Optional[List[str]] = None) -> None:
         print("Running capacity sweep...")
         sweep = run_capacity_sweep(n_replications=sweep_reps, pool=pool)
 
-    print("Running layout search (500 orientations)...")
+    print("Running layout search (825 orientations across 165 feasible topologies)...")
     ori_records, _ = run_orientation_search(
         n_replications=search_reps,
         out_csv=OUTPUT_DIR / "orientation_search_400.csv",

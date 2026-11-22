@@ -9,10 +9,10 @@ from typing import TYPE_CHECKING, Callable, Dict, List, Sequence, Tuple
 
 import cairo
 
-from simulation_engine import ExperimentSummary
+from src.simulation_engine import ExperimentSummary
 
 if TYPE_CHECKING:
-    from orientation_search import OrientationRecord
+    from src.orientation_search import OrientationRecord
 
 
 PALETTE = {
@@ -21,9 +21,9 @@ PALETTE = {
     "ORI-099": (0.576, 0.471, 0.376),
     "ORI-085": (0.867, 0.518, 0.322),
     "ORI-245": (0.333, 0.659, 0.408),
-    "ORI-246": (0.800, 0.475, 0.655),
+    "ORI-5D9": (0.800, 0.475, 0.655),
     "ORI-325": (0.392, 0.710, 0.804),
-    "ORI-105": (0.298, 0.447, 0.690),
+    "ORI-021": (0.298, 0.447, 0.690),
     "ORI-CHAMP": (0.090, 0.545, 0.355),
 }
 
@@ -161,17 +161,17 @@ def plot_fig1_entropy_decay(
     summaries: Dict[str, ExperimentSummary], out_dir: Path
 ) -> Tuple[Path, Path]:
     """Chart 1: Accuracy decay curves with +-1 SD bands and 80% usability threshold."""
-    base_ids = ["ORI-105", "ORI-245", "ORI-246", "ORI-325", "ORI-099", "ORI-258"]
+    base_ids = ["ORI-5D9", "ORI-021", "ORI-245", "ORI-325", "ORI-099", "ORI-258"]
     selected_ids = (["ORI-CHAMP"] if "ORI-CHAMP" in summaries else []) + base_ids
-    champ_long = _format_champ_labels(summaries["ORI-CHAMP"])[0] if "ORI-CHAMP" in summaries else "ORI-086"
+    champ_long = _format_champ_labels(summaries["ORI-CHAMP"])[0] if "ORI-CHAMP" in summaries else "ORI-001"
     short_labels = {
         "ORI-CHAMP": champ_long,
-        "ORI-105": "ORI-105: Top: Peg | Mid: 7D_4P | Btm: 7D_3P",
-        "ORI-245": "ORI-245: Top: Peg | Mid: 7D_4P | Btm: 1D_2B",
-        "ORI-246": "ORI-246: Top: Peg | Mid: 7D_4P | Btm: 1B_1D_1B",
-        "ORI-325": "ORI-325: Top: Peg | Mid: 1B_4D_4P | Btm: 2B",
-        "ORI-099": "ORI-099: Top: Peg | Mid: 7D_3P | Btm: 1B_4D_3P (low cue)",
-        "ORI-258": "ORI-258: Top: Peg | Mid: 7D_4P | Btm: 2B (90% fill, low cue)",
+        "ORI-5D9": "ORI-5D9: Top: Peg | Mid: 5D9_4P | Btm: 5D9_4P",
+        "ORI-021": "ORI-021: Top: Peg | Mid: 7D6_4P | Btm: 1B_4D6_3P",
+        "ORI-245": "ORI-245: Top: Peg | Mid: 7D6_4P | Btm: 1D6_2B",
+        "ORI-325": "ORI-325: Top: Peg | Mid: 1B_4D6_4P | Btm: 2B",
+        "ORI-099": "ORI-099: Top: Peg | Mid: 7D6_3P | Btm: 1B_4D6_3P (low cue)",
+        "ORI-258": "ORI-258: Top: Peg | Mid: 7D6_4P | Btm: 2B (90% fill, low cue)",
     }
 
     def draw(ctx: cairo.Context, w: int, h: int) -> None:
@@ -578,7 +578,7 @@ def plot_fig3_slot_heatmap(
             for r in exp_left.slot_heatmap_data + exp_right.slot_heatmap_data
         )
         champ_hdr = _format_champ_labels(exp_right)[0]
-        draw_panel(ctx, 34, 82, 505, exp_left, "ORI-258: Top: Peg | Mid: 7D_4P | Btm: 2B (90% fill, low cue)", max_mis)
+        draw_panel(ctx, 34, 82, 505, exp_left, "ORI-258: Top: Peg | Mid: 7D6_4P | Btm: 2B (90% fill, low cue)", max_mis)
         draw_panel(ctx, 575, 82, 505, exp_right, champ_hdr, max_mis)
 
         cbx, cby, cbw, cbh = 34, h - 38, 280, 12
@@ -668,9 +668,9 @@ def plot_fig4_capacity_and_partitions(
         ctx.restore()
 
         sweep_styles = [
-            ("TOPO001_Mid7D4P_Btm7D4P", "Top: Peg | Mid: 7D_4P | Btm: 7D_4P (ORI-001)", PALETTE["ORI-CHAMP"]),
-            ("TOPO07_Mid7D4P_Btm2B", "Top: Peg | Mid: 7D_4P | Btm: 2B", PALETTE["ORI-245"]),
-            ("TOPO07_BaselineCOI", "Top: Peg | Mid: 7D_4P | Btm: 2B (COI baseline)", PALETTE["ORI-258"]),
+            ("TOPO053_Mid3D93D64P_Btm3D93D64P", "Top: Peg | Mid: 3D9_3D6_4P | Btm: 3D9_3D6_4P", PALETTE["ORI-CHAMP"]),
+            ("TOPO007_Mid7D64P_Btm2B", "Top: Peg | Mid: 7D6_4P | Btm: 2B", PALETTE["ORI-245"]),
+            ("TOPO007_BaselineCOI", "Top: Peg | Mid: 7D6_4P | Btm: 2B (COI baseline)", PALETTE["ORI-258"]),
         ]
         for key, label, col in sweep_styles:
             pts = sweep_results[key]
@@ -731,14 +731,14 @@ def plot_fig4_capacity_and_partitions(
         bx_start = rx0 + 255
         bw_max = rpw - 330
         bar_label_map = {
-            "ORI-258": "ORI-258: Top: Peg | Mid: 7D_4P | Btm: 2B (90%, low cue)",
-            "ORI-255": "ORI-255: Top: Peg | Mid: 7D_4P | Btm: 2B (height split)",
-            "ORI-099": "ORI-099: Top: Peg | Mid: 7D_3P | Btm: 1B_4D_3P (low cue)",
-            "ORI-085": "ORI-085: Top: Peg | Mid: 7D_3P | Btm: 1B_4D_3P",
-            "ORI-245": "ORI-245: Top: Peg | Mid: 7D_4P | Btm: 1D_2B",
-            "ORI-246": "ORI-246: Top: Peg | Mid: 7D_4P | Btm: 1B_1D_1B",
-            "ORI-325": "ORI-325: Top: Peg | Mid: 1B_4D_4P | Btm: 2B",
-            "ORI-105": "ORI-105: Top: Peg | Mid: 7D_4P | Btm: 7D_3P",
+            "ORI-258": "ORI-258: Top: Peg | Mid: 7D6_4P | Btm: 2B (90%, low cue)",
+            "ORI-255": "ORI-255: Top: Peg | Mid: 7D6_4P | Btm: 2B (height split)",
+            "ORI-099": "ORI-099: Top: Peg | Mid: 7D6_3P | Btm: 1B_4D6_3P (low cue)",
+            "ORI-085": "ORI-085: Top: Peg | Mid: 7D6_3P | Btm: 1B_4D6_3P",
+            "ORI-245": "ORI-245: Top: Peg | Mid: 7D6_4P | Btm: 1D6_2B",
+            "ORI-5D9": "ORI-5D9: Top: Peg | Mid: 5D9_4P | Btm: 5D9_4P",
+            "ORI-325": "ORI-325: Top: Peg | Mid: 1B_4D6_4P | Btm: 2B",
+            "ORI-021": "ORI-021: Top: Peg | Mid: 7D6_4P | Btm: 1B_4D6_3P",
         }
 
         for idx, s in enumerate(ranked):
@@ -874,7 +874,7 @@ def plot_fig5_orientation_search_pareto(
             ctx,
             38,
             30,
-            "Layout Search Across 100 Wire Shelf Topologies (500 Configurations)",
+            "Layout Search Across 165 Feasible Wire Shelf Topologies (825 Configurations)",
             size=15.0,
             bold=True,
         )
@@ -882,7 +882,7 @@ def plot_fig5_orientation_search_pareto(
             ctx,
             38,
             51,
-            "100 three-tier shelf setups (10 Mid x 10 Btm, Top Peg) x 5 placement rules (1,000 cycles per run)",
+            "165 physically feasible setups (requiring >=1 9in drawer row or wire bin) x 5 policies",
             size=11.0,
             color=(0.35, 0.39, 0.45),
         )
@@ -892,7 +892,7 @@ def plot_fig5_orientation_search_pareto(
             ctx,
             ml + pw / 2.0,
             mt - 12,
-            "Pareto Frontier: Cycle 1,000 Accuracy vs. Relative Effort (100 Topologies)",
+            "Pareto Frontier: Cycle 1,000 Accuracy vs. Relative Effort (165 Topologies)",
             size=11.8,
             bold=True,
             align="center",

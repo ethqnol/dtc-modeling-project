@@ -5,7 +5,7 @@
 execution:
   benchmark_replications: 50
   sweep_replications: 25
-  search_replications: 4
+  search_replications: 6
   composite_score_latency_weight: 0.85
 
 behavioral_weights:
@@ -18,9 +18,14 @@ behavioral_weights:
   alpha_crowd: 3.2                    # Fitts's congestion slope past 75%-80% working fill ceiling [2, 3, 5]
   alpha_blur: 1.75                    # Category Adjustment boundary noise slope [3, 4]
   alpha_ergo: 2.3                     # Ergonomic reach/bend strain multiplier across shelf zones [5, 7]
-  bin_dump_error_penalty: 0.09        # Added return-slip blur per open wire bin on shelf [4, 7]
-  bin_dump_routing_weight: 0.28       # Drop-in attraction pulling rushed slips into wire bins [4, 7]
-  mech_diversity_penalty: 0.08        # Cognitive switching load per storage style beyond 2 [7]
+  bin_dump_error_penalty: 0.11        # Added return-slip blur per open wire bin on shelf [4, 7]
+  bin_dump_routing_weight: 0.30       # Drop-in attraction pulling rushed slips into wire bins [4, 7]
+  mech_diversity_penalty: 0.10        # Cognitive switching load per storage style beyond 2 [7]
+  bin_drawer_same_row_penalty: 0.16   # Extra friction when negotiating a bin and drawers in the same row
+  drawer_size_mix_penalty: 0.0        # No mechanism penalty when mixing 6in and 9in drawer widths
+  multi_sku_slot_penalty: 0.16        # Return-slip & lookup blur per extra SKU sharing one compartment
+  slot_deficit_penalty: 1.20          # Organizational blur when total drawer compartments < 48
+  row_width_mismatch_penalty: 0.25    # Alignment/layout friction when drawer rows differ in width (42in vs 45in)
   unlatch_rush_prob: 0.38             # Hurried bypass prob * tau leaving pull-down peg row down [6, 7]
   occlusion_friction_penalty: 0.35    # Extra error friction while unlatched peg blocks Mid shelf
   search_miss_penalty_sec: 14.0       # Base search effort multiplier when a roll is missing from home

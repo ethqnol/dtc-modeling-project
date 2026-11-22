@@ -6,11 +6,14 @@ import random
 from dataclasses import dataclass
 from typing import Dict, List, Sequence, Tuple
 
-from sim_config import (
+from src.sim_config import (
     ExperimentScenario,
     build_default_experiments,
     build_mechanism_specs,
+    count_mixed_bin_drawer_rows,
+    has_row_width_mismatch,
     count_shelf_complexity,
+    has_mixed_drawer_sizes,
 )
 
 STATE_NAMES = [
@@ -263,6 +266,20 @@ def compute_absorption_time_from_set(
     return {t_list[idx]: sol[idx] for idx in range(m)}
 
 
+def _count_drawer_slots(row_configs: Optional[Sequence[str]]) -> int:
+    """Return total modular drawer partition count across all rows."""
+    if not row_configs:
+        return 48
+    counts = {
+        "7D6_4P": 28, "7D_4P": 28, "7D6_3P": 21, "7D_3P": 21, "4D4P_3D3P": 25,
+        "5D9_4P": 20, "5D9_3P": 15, "3D9_3D6_4P": 24,
+        "1B_4D6_4P": 16, "1B_4D_4P": 16, "1B_4D6_3P": 12, "1B_4D_3P": 12,
+        "1B_3D9_4P": 12, "1B_3D9_3P": 9,
+        "1D6_2B": 4, "1B_1D6_1B": 4, "2B_1D6": 4, "1D_2B": 4, "1B_1D_1B": 4, "2B_1D": 4,
+    }
+    return sum(counts.get(rc, 0) for rc in row_configs)
+
+
 def build_scenario_transition_matrix(
     scenario: ExperimentScenario, regime: str = "rush"
 ) -> List[List[float]]:
@@ -295,15 +312,15 @@ def build_scenario_transition_matrix(
         for tier_idx, rcode in enumerate((r1, r2, r3), start=1):
             t_tag = {1: "eye", 2: "mid", 3: "3"}[tier_idx]
             w = row_w[tier_idx]
-            if rcode in ("7D_4P", "7D_3P", "4D4P_3D3P"):
+            if rcode in ("7D6_4P", "7D6_3P", "5D9_4P", "5D9_3P", "3D9_3D6_4P", "7D_4P", "7D_3P", "4D4P_3D3P"):
                 mechs.append(f"split_drawer_{t_tag}")
                 weights.append(w)
-            elif rcode in ("1B_4D_4P", "1B_4D_3P", "1B_2D4P_2D3P"):
+            elif rcode in ("1B_4D6_4P", "1B_4D6_3P", "1B_3D9_4P", "1B_3D9_3P", "1B_4D_4P", "1B_4D_3P", "1B_2D4P_2D3P"):
                 mechs.append(f"split_drawer_{t_tag}")
                 weights.append(w * 0.76)
                 mechs.append(f"wire_bin_{t_tag}")
                 weights.append(w * 0.24)
-            elif rcode in ("1D_2B", "1B_1D_1B", "2B_1D"):
+            elif rcode in ("1D6_2B", "1B_1D6_1B", "2B_1D6", "1D_2B", "1B_1D_1B", "2B_1D"):
                 mechs.append(f"split_drawer_{t_tag}")
                 weights.append(w * 0.22)
                 mechs.append(f"wire_bin_{t_tag}")
@@ -350,8 +367,19 @@ def build_scenario_transition_matrix(
     crowd_excess = max(0.0, (scenario.target_fill_ratio + bulk_peg_extra - 0.75) / (1.05 - min(0.99, scenario.target_fill_ratio + 0.5 * bulk_peg_extra)))
     phi_crowd = 1.0 + beh.alpha_crowd * crowd_excess
     n_bins, extra_styles = count_shelf_complexity(scenario.row_configs)
+    mixed_bin_drw_rows = count_mixed_bin_drawer_rows(scenario.row_configs)
     bin_dump_blur = beh.bin_dump_error_penalty * n_bins
-    cog_load_blur = beh.mech_diversity_penalty * extra_styles
+    size_mix_blur = beh.drawer_size_mix_penalty if has_mixed_drawer_sizes(scenario.row_configs) else 0.0
+    n_drawer_slots = _count_drawer_slots(scenario.row_configs)
+    slot_deficit_blur = beh.slot_deficit_penalty * max(0.0, (48 - n_drawer_slots) / 48.0)
+    row_width_blur = beh.row_width_mismatch_penalty if has_row_width_mismatch(scenario.row_configs) else 0.0
+    cog_load_blur = (
+        beh.mech_diversity_penalty * extra_styles
+        + beh.bin_drawer_same_row_penalty * mixed_bin_drw_rows
+        + size_mix_blur
+        + slot_deficit_blur
+        + row_width_blur
+    )
     partition_blur = 0.16 if scenario.drawer_partitions == 3 else 0.06
     phi_blur = 1.0 + beh.alpha_blur * (
         (1.0 - scenario.cue_salience) * 0.25 + partition_blur + bin_dump_blur + cog_load_blur

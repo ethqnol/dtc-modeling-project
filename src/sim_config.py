@@ -18,9 +18,10 @@ from typing import Any, Dict, List, Optional, Sequence, Tuple
 import yaml
 
 
-DEFAULT_CSV_PATH = Path(__file__).resolve().parent / "roll-data.csv"
-DEFAULT_CONFIG_PATH = Path(__file__).resolve().parent / "shelf_config.yaml"
-DEFAULT_GEOMETRY_PATH = Path(__file__).resolve().parent / "shelf_geometry.yaml"
+ROOT_DIR = Path(__file__).resolve().parent.parent
+DEFAULT_CSV_PATH = ROOT_DIR / "data" / "roll-data.csv"
+DEFAULT_CONFIG_PATH = ROOT_DIR / "config" / "shelf_config.yaml"
+DEFAULT_GEOMETRY_PATH = ROOT_DIR / "config" / "shelf_geometry.yaml"
 
 _ACTIVE_CONFIG_PATH: Optional[Path] = None
 _ACTIVE_CONFIG_CACHE: Optional[Tuple[Optional[str], Dict[str, Any]]] = None
@@ -46,9 +47,13 @@ class ShelfGeometryConfig:
     wire_bins_per_full_row: int = 2
     drawers_per_full_row: int = 7
     drawers_per_half_bay: int = 4
-    drawer_outer_width_cm: float = 17.1
+    drawer_outer_width_cm: float = 15.24
     drawer_outer_depth_cm: float = 60.0
     drawer_outer_height_cm: float = 30.0
+    drawers_9in_per_full_row: int = 5
+    drawers_9in_per_half_bay: int = 3
+    drawer_9in_outer_width_cm: float = 22.86
+    drawer_9in_inner_width_cm: float = 21.6
     wire_bin_bay_width_cm: float = 51.4
     wire_bin_bay_depth_cm: float = 60.0
     wire_bin_bay_height_cm: float = 60.0
@@ -57,7 +62,7 @@ class ShelfGeometryConfig:
 
     drawer_count: int = 7
     partitions_per_drawer: int = 4
-    drawer_inner_width_cm: float = 15.6
+    drawer_inner_width_cm: float = 14.0
     drawer_inner_depth_cm: float = 58.0
     drawer_inner_height_cm: float = 27.0
     partition_divider_thickness_cm: float = 0.4
@@ -72,13 +77,20 @@ class ShelfGeometryConfig:
     peg_usable_length_cm: float = 25.0
     peg_horizontal_spacing_cm: float = 15.0
     peg_pull_down_drop_cm: float = 35.0
+    peg_max_od_cm: float = 15.24
 
-    def partition_width_cm(self, partitions: Optional[int] = None, sub_idx: int = 0) -> float:
+    def partition_width_cm(
+        self,
+        partitions: Optional[int] = None,
+        sub_idx: int = 0,
+        inner_width_cm: Optional[float] = None,
+    ) -> float:
         """Return clear inner width (cm) of a single drawer partition (4P 2x2 or 3P 2:1:1)."""
         n = partitions if partitions is not None else self.partitions_per_drawer
+        w = inner_width_cm if inner_width_cm is not None else self.drawer_inner_width_cm
         if n == 3 and sub_idx == 0:
-            return self.drawer_inner_width_cm
-        return (self.drawer_inner_width_cm - self.partition_divider_thickness_cm) / 2.0
+            return w
+        return (w - self.partition_divider_thickness_cm) / 2.0
 
 
 @dataclass
@@ -228,9 +240,14 @@ class BehavioralConfig:
     occlusion_friction_penalty: float = 0.35
     search_miss_penalty_sec: float = 14.0
     usability_accuracy_threshold: float = 0.80
-    bin_dump_error_penalty: float = 0.09
-    bin_dump_routing_weight: float = 0.28
-    mech_diversity_penalty: float = 0.08
+    bin_dump_error_penalty: float = 0.11
+    bin_dump_routing_weight: float = 0.30
+    mech_diversity_penalty: float = 0.10
+    bin_drawer_same_row_penalty: float = 0.16
+    drawer_size_mix_penalty: float = 0.0
+    multi_sku_slot_penalty: float = 0.16
+    slot_deficit_penalty: float = 1.20
+    row_width_mismatch_penalty: float = 0.25
 
 
 def count_shelf_complexity(row_configs: Optional[Sequence[str]]) -> Tuple[int, int]:
@@ -238,20 +255,50 @@ def count_shelf_complexity(row_configs: Optional[Sequence[str]]) -> Tuple[int, i
     if not row_configs:
         return 0, 0
     n_bins = sum(
-        2 if r in ("2B", "1D_2B", "1B_1D_1B", "2B_1D") else (1 if r.startswith("1B_") else 0)
+        2 if r in ("2B", "1D6_2B", "1B_1D6_1B", "2B_1D6", "1D_2B", "1B_1D_1B", "2B_1D")
+        else (1 if r.startswith("1B_") else 0)
         for r in row_configs
     )
     styles = set()
     for r in row_configs:
         if "PEG" in r:
             styles.add("peg")
-        if r in ("7D_4P", "4D4P_3D3P", "1B_4D_4P", "1B_2D4P_2D3P", "1D_2B", "1B_1D_1B", "2B_1D"):
+        if "4P" in r or r in ("1D6_2B", "1B_1D6_1B", "2B_1D6", "1D_2B", "1B_1D_1B", "2B_1D"):
             styles.add("4P_drawer")
-        if r in ("7D_3P", "4D4P_3D3P", "1B_4D_3P", "1B_2D4P_2D3P"):
+        if "3P" in r:
             styles.add("3P_drawer")
-        if r in ("2B", "1D_2B", "1B_1D_1B", "2B_1D") or r.startswith("1B_"):
+        if r in ("2B", "1D6_2B", "1B_1D6_1B", "2B_1D6", "1D_2B", "1B_1D_1B", "2B_1D") or r.startswith("1B_"):
             styles.add("wire_bin")
     return n_bins, max(0, len(styles) - 2)
+
+
+def has_mixed_drawer_sizes(row_configs: Optional[Sequence[str]]) -> bool:
+    """Return True if a rack mixes both 6in and 9in outer drawer sizes."""
+    if not row_configs:
+        return False
+    has_6in = any(("D6" in r or r in ("7D_4P", "7D_3P", "1B_4D_4P", "1B_4D_3P", "1D_2B", "1B_1D_1B", "2B_1D")) for r in row_configs)
+    has_9in = any("D9" in r for r in row_configs)
+    return has_6in and has_9in
+
+
+def count_mixed_bin_drawer_rows(row_configs: Optional[Sequence[str]]) -> int:
+    """Return number of shelf rows that mix a wire bin and drawers in the same row."""
+    if not row_configs:
+        return 0
+    return sum(1 for r in row_configs if ("B" in r and "D" in r))
+
+
+def has_row_width_mismatch(row_configs: Optional[Sequence[str]]) -> bool:
+    """Return True if full-drawer rows on the rack have misaligned outer widths (e.g. 42in vs 45in)."""
+    if not row_configs:
+        return False
+    widths_in = []
+    for r in row_configs:
+        if r in ("7D6_4P", "7D6_3P", "7D_4P", "7D_3P", "4D4P_3D3P"):
+            widths_in.append(42.0)
+        elif r in ("5D9_4P", "5D9_3P", "3D9_3D6_4P"):
+            widths_in.append(45.0)
+    return len(set(widths_in)) > 1
 
 
 def _strip_toon_comment(raw: str) -> str:
@@ -903,14 +950,14 @@ def build_default_experiments() -> List[ExperimentScenario]:
     return [
         ExperimentScenario(
             exp_id="ORI-258",
-            name="Top: Peg | Mid: 7D_4P | Btm: 2B (90% fill, low cue)",
+            name="Top: Peg | Mid: 7D6_4P | Btm: 2B (90% fill, low cue)",
             topology="M_modular",
             strategy="B_kit",
             drawer_partitions=4,
             cue_salience=0.20,
             target_fill_ratio=0.90,
-            description="Top: Peg | Mid: 7D_4P | Btm: 2B at 90% fill with low label clarity and height-split COI.",
-            row_configs=("7D_4P", "2B", "SLIDING_PEG"),
+            description="Top: Peg | Mid: 7D6_4P | Btm: 2B at 90% fill with low label clarity and height-split COI.",
+            row_configs=("7D6_4P", "2B", "SLIDING_PEG"),
             abc_colocation_mode="cross_tier_height",
             overflow_mode="all_colocated",
             spatial_order_mode="random_perm",
@@ -918,14 +965,14 @@ def build_default_experiments() -> List[ExperimentScenario]:
         ),
         ExperimentScenario(
             exp_id="ORI-255",
-            name="Top: Peg | Mid: 7D_4P | Btm: 2B (height split)",
+            name="Top: Peg | Mid: 7D6_4P | Btm: 2B (height split)",
             topology="M_modular",
             strategy="C_hybrid",
             drawer_partitions=4,
             cue_salience=0.90,
             target_fill_ratio=0.80,
-            description="Top: Peg | Mid: 7D_4P | Btm: 2B at 80% fill with clear labels and height-split grouping.",
-            row_configs=("7D_4P", "2B", "SLIDING_PEG"),
+            description="Top: Peg | Mid: 7D6_4P | Btm: 2B at 80% fill with clear labels and height-split grouping.",
+            row_configs=("7D6_4P", "2B", "SLIDING_PEG"),
             abc_colocation_mode="cross_tier_height",
             overflow_mode="hybrid_reserve",
             spatial_order_mode="center_out",
@@ -933,14 +980,14 @@ def build_default_experiments() -> List[ExperimentScenario]:
         ),
         ExperimentScenario(
             exp_id="ORI-099",
-            name="Top: Peg | Mid: 7D_3P | Btm: 1B_4D_3P (low cue)",
+            name="Top: Peg | Mid: 7D6_3P | Btm: 1B_4D6_3P (low cue)",
             topology="M_modular",
             strategy="C_hybrid",
             drawer_partitions=3,
             cue_salience=0.20,
             target_fill_ratio=0.80,
-            description="Top: Peg | Mid: 7D_3P | Btm: 1B_4D_3P at 80% fill with low label clarity and random placement.",
-            row_configs=("7D_3P", "1B_4D_3P", "SLIDING_PEG"),
+            description="Top: Peg | Mid: 7D6_3P | Btm: 1B_4D6_3P at 80% fill with low label clarity and random placement.",
+            row_configs=("7D6_3P", "1B_4D6_3P", "SLIDING_PEG"),
             abc_colocation_mode="adjacent_partition",
             overflow_mode="hybrid_reserve",
             spatial_order_mode="random_perm",
@@ -948,14 +995,14 @@ def build_default_experiments() -> List[ExperimentScenario]:
         ),
         ExperimentScenario(
             exp_id="ORI-085",
-            name="Top: Peg | Mid: 7D_3P | Btm: 1B_4D_3P",
+            name="Top: Peg | Mid: 7D6_3P | Btm: 1B_4D6_3P",
             topology="M_modular",
             strategy="C_hybrid",
             drawer_partitions=3,
             cue_salience=0.90,
             target_fill_ratio=0.80,
-            description="Top: Peg | Mid: 7D_3P | Btm: 1B_4D_3P at 80% fill with clear labels and adjacent A/B/C grouping.",
-            row_configs=("7D_3P", "1B_4D_3P", "SLIDING_PEG"),
+            description="Top: Peg | Mid: 7D6_3P | Btm: 1B_4D6_3P at 80% fill with clear labels and adjacent A/B/C grouping.",
+            row_configs=("7D6_3P", "1B_4D6_3P", "SLIDING_PEG"),
             abc_colocation_mode="adjacent_partition",
             overflow_mode="hybrid_reserve",
             spatial_order_mode="center_out",
@@ -963,29 +1010,29 @@ def build_default_experiments() -> List[ExperimentScenario]:
         ),
         ExperimentScenario(
             exp_id="ORI-245",
-            name="Top: Peg | Mid: 7D_4P | Btm: 1D_2B",
+            name="Top: Peg | Mid: 7D6_4P | Btm: 1D6_2B",
             topology="M_modular",
             strategy="C_hybrid",
             drawer_partitions=4,
             cue_salience=0.90,
             target_fill_ratio=0.80,
-            description="Top: Peg | Mid: 7D_4P | Btm: 1D_2B (1 drawer on left + 2 wire bins filling 120 cm flush).",
-            row_configs=("7D_4P", "1D_2B", "SLIDING_PEG"),
+            description="Top: Peg | Mid: 7D6_4P | Btm: 1D6_2B (1 6in drawer on left + 2 wire bins).",
+            row_configs=("7D6_4P", "1D6_2B", "SLIDING_PEG"),
             abc_colocation_mode="adjacent_partition",
             overflow_mode="hybrid_reserve",
             spatial_order_mode="center_out",
             layout_seed=1400,
         ),
         ExperimentScenario(
-            exp_id="ORI-246",
-            name="Top: Peg | Mid: 7D_4P | Btm: 1B_1D_1B",
+            exp_id="ORI-5D9",
+            name="Top: Peg | Mid: 5D9_4P | Btm: 5D9_4P",
             topology="M_modular",
             strategy="C_hybrid",
             drawer_partitions=4,
             cue_salience=0.90,
             target_fill_ratio=0.80,
-            description="Top: Peg | Mid: 7D_4P | Btm: 1B_1D_1B (wire bin, 1 center drawer, wire bin filling 120 cm flush).",
-            row_configs=("7D_4P", "1B_1D_1B", "SLIDING_PEG"),
+            description="Top: Peg | Mid: 5D9_4P | Btm: 5D9_4P (all 9in outer drawers, bin-free).",
+            row_configs=("5D9_4P", "5D9_4P", "SLIDING_PEG"),
             abc_colocation_mode="adjacent_partition",
             overflow_mode="hybrid_reserve",
             spatial_order_mode="center_out",
@@ -993,32 +1040,32 @@ def build_default_experiments() -> List[ExperimentScenario]:
         ),
         ExperimentScenario(
             exp_id="ORI-325",
-            name="Top: Peg | Mid: 1B_4D_4P | Btm: 2B",
+            name="Top: Peg | Mid: 1B_4D6_4P | Btm: 2B",
             topology="M_modular",
             strategy="C_hybrid",
             drawer_partitions=4,
             cue_salience=0.90,
             target_fill_ratio=0.80,
-            description="Top: Peg | Mid: 1B_4D_4P | Btm: 2B at 80% fill.",
-            row_configs=("1B_4D_4P", "2B", "SLIDING_PEG"),
+            description="Top: Peg | Mid: 1B_4D6_4P | Btm: 2B at 80% fill.",
+            row_configs=("1B_4D6_4P", "2B", "SLIDING_PEG"),
             abc_colocation_mode="adjacent_partition",
             overflow_mode="hybrid_reserve",
             spatial_order_mode="center_out",
             layout_seed=1524,
         ),
         ExperimentScenario(
-            exp_id="ORI-105",
-            name="Top: Peg | Mid: 7D_4P | Btm: 7D_3P",
+            exp_id="ORI-021",
+            name="Top: Peg | Mid: 7D6_4P | Btm: 1B_4D6_3P",
             topology="M_modular",
             strategy="C_hybrid",
             drawer_partitions=4,
             cue_salience=0.90,
             target_fill_ratio=0.80,
-            description="Top: Peg | Mid: 7D_4P | Btm: 7D_3P at 80% fill.",
-            row_configs=("7D_4P", "7D_3P", "SLIDING_PEG"),
+            description="Top: Peg | Mid: 7D6_4P | Btm: 1B_4D6_3P at 80% fill.",
+            row_configs=("7D6_4P", "1B_4D6_3P", "SLIDING_PEG"),
             abc_colocation_mode="adjacent_partition",
             overflow_mode="hybrid_reserve",
             spatial_order_mode="center_out",
-            layout_seed=1183,
+            layout_seed=1040,
         ),
     ]

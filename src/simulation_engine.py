@@ -8,7 +8,7 @@ import statistics
 from dataclasses import dataclass, field
 from typing import Dict, List, Optional, Sequence, Tuple
 
-from sim_config import (
+from src.sim_config import (
     DEFAULT_CSV_PATH,
     BehavioralConfig,
     ExperimentScenario,
@@ -16,7 +16,10 @@ from sim_config import (
     RollItem,
     RollVariantSKU,
     build_mechanism_specs,
+    count_mixed_bin_drawer_rows,
+    has_row_width_mismatch,
     count_shelf_complexity,
+    has_mixed_drawer_sizes,
     load_roll_inventory,
 )
 
@@ -41,11 +44,14 @@ class PhysicalSlot:
     bay_side: int = 0
     x_center_cm: float = 60.0
     partition_count: int = 4
+    max_od_cm: float = 999.0
 
     def can_physically_accept(
         self, roll: RollItem, rolls_by_id: Dict[int, RollItem]
     ) -> bool:
-        """Check hard geometric constraints (coreless, height stack, hard roll count)."""
+        """Check hard geometric constraints (OD limit, coreless, height stack, hard roll count)."""
+        if roll.outer_diameter_cm > self.max_od_cm:
+            return False
         if not self.supports_coreless and not roll.has_core:
             return False
         if len(self.occupant_roll_ids) >= self.max_rolls_hard:
@@ -148,19 +154,25 @@ def _create_modular_slots(scenario: ExperimentScenario) -> List[PhysicalSlot]:
             total_w_cm: float,
             x_start_cm: float = 0.0,
             d_offset: int = 0,
+            is_9in: bool = False,
         ) -> None:
             mech_id = f"split_drawer_{t_tag}"
             n_drw = len(part_counts)
             slot_w = total_w_cm / max(1, n_drw)
+            inner_w = geom.drawer_9in_inner_width_cm if is_9in else geom.drawer_inner_width_cm
             for d, p_cnt in enumerate(part_counts):
                 d_idx = d + d_offset
                 x_center = x_start_cm + (d + 0.5) * slot_w
                 bay_side = 0 if x_center < 60.0 else 1
                 for p in range(p_cnt):
-                    p_width = geom.partition_width_cm(p_cnt, p)
+                    p_width = geom.partition_width_cm(p_cnt, p, inner_width_cm=inner_w)
                     is_wide_top = p_cnt == 3 and p == 0
-                    hard_cap = 10 if is_wide_top else 6
-                    nom_cap = 6.6 if is_wide_top else 3.5
+                    if is_9in:
+                        hard_cap = 13 if is_wide_top else 8
+                        nom_cap = 9.0 if is_wide_top else 5.0
+                    else:
+                        hard_cap = 10 if is_wide_top else 6
+                        nom_cap = 6.6 if is_wide_top else 3.5
                     slots.append(
                         PhysicalSlot(
                             slot_id=f"R{tier_idx}-DRW-{d_idx+1}-P{p+1}",
@@ -177,6 +189,7 @@ def _create_modular_slots(scenario: ExperimentScenario) -> List[PhysicalSlot]:
                             bay_side=bay_side,
                             x_center_cm=x_center,
                             partition_count=p_cnt,
+                            max_od_cm=23.0 if is_9in else inner_w,
                         )
                     )
 
@@ -209,44 +222,63 @@ def _create_modular_slots(scenario: ExperimentScenario) -> List[PhysicalSlot]:
                         bay_side=bay_side,
                         x_center_cm=x_center,
                         partition_count=1,
+                        max_od_cm=geom.wire_bin_width_cm,
                     )
                 )
 
-        if row_code in ("7D_4P", "7D_3P", "4D4P_3D3P"):
+        if row_code in ("7D6_4P", "7D6_3P", "7D_4P", "7D_3P", "4D4P_3D3P"):
             if row_code == "4D4P_3D3P":
                 parts_list = [4, 4, 4, 4, 3, 3, 3]
             else:
                 p_cnt = 4 if row_code.endswith("4P") else 3
                 parts_list = [p_cnt] * geom.drawers_per_full_row
-            _append_drawers(parts_list, geom.shelf_width_cm)
+            _append_drawers(parts_list, len(parts_list) * geom.drawer_outer_width_cm, is_9in=False)
 
-        elif row_code in ("1B_4D_4P", "1B_4D_3P", "1B_2D4P_2D3P"):
+        elif row_code in ("5D9_4P", "5D9_3P"):
+            p_cnt = 4 if row_code.endswith("4P") else 3
+            parts_list = [p_cnt] * geom.drawers_9in_per_full_row
+            _append_drawers(parts_list, len(parts_list) * geom.drawer_9in_outer_width_cm, is_9in=True)
+
+        elif row_code == "3D9_3D6_4P":
+            span_9in = 3 * geom.drawer_9in_outer_width_cm
+            span_6in = 3 * geom.drawer_outer_width_cm
+            _append_drawers([4, 4, 4], span_9in, x_start_cm=0.0, d_offset=0, is_9in=True)
+            _append_drawers([4, 4, 4], span_6in, x_start_cm=span_9in, d_offset=3, is_9in=False)
+
+        elif row_code in ("1B_4D6_4P", "1B_4D6_3P", "1B_4D_4P", "1B_4D_3P", "1B_2D4P_2D3P"):
             if row_code == "1B_2D4P_2D3P":
                 parts_list = [4, 4, 3, 3]
             else:
                 p_cnt = 4 if row_code.endswith("4P") else 3
                 parts_list = [p_cnt] * geom.drawers_per_half_bay
             drw_span = len(parts_list) * geom.drawer_outer_width_cm
-            _append_drawers(parts_list, drw_span)
+            _append_drawers(parts_list, drw_span, is_9in=False)
             _append_bins(1, drw_span, bay_side_fixed=1)
 
-        elif row_code == "1D_2B":
+        elif row_code in ("1B_3D9_4P", "1B_3D9_3P"):
+            p_cnt = 4 if row_code.endswith("4P") else 3
+            parts_list = [p_cnt] * geom.drawers_9in_per_half_bay
+            drw_span = len(parts_list) * geom.drawer_9in_outer_width_cm
+            _append_drawers(parts_list, drw_span, is_9in=True)
+            _append_bins(1, drw_span, bay_side_fixed=1)
+
+        elif row_code in ("1D6_2B", "1D_2B"):
             drw_span = geom.drawer_outer_width_cm
-            _append_drawers([4], drw_span, x_start_cm=0.0)
+            _append_drawers([4], drw_span, x_start_cm=0.0, is_9in=False)
             _append_bins(2, x_start_cm=drw_span, bay_side_fixed=None)
 
-        elif row_code == "1B_1D_1B":
+        elif row_code in ("1B_1D6_1B", "1B_1D_1B"):
             bin_w = geom.wire_bin_bay_width_cm
             drw_w = geom.drawer_outer_width_cm
             _append_bins(1, x_start_cm=0.0, bay_side_fixed=0, b_offset=0)
-            _append_drawers([4], drw_w, x_start_cm=bin_w, d_offset=0)
+            _append_drawers([4], drw_w, x_start_cm=bin_w, d_offset=0, is_9in=False)
             _append_bins(1, x_start_cm=bin_w + drw_w, bay_side_fixed=1, b_offset=geom.wire_bin_subzones)
 
-        elif row_code == "2B_1D":
+        elif row_code in ("2B_1D6", "2B_1D"):
             bin_span = 2 * geom.wire_bin_bay_width_cm
             drw_w = geom.drawer_outer_width_cm
             _append_bins(2, x_start_cm=0.0, bay_side_fixed=None, b_offset=0)
-            _append_drawers([4], drw_w, x_start_cm=bin_span, d_offset=0)
+            _append_drawers([4], drw_w, x_start_cm=bin_span, d_offset=0, is_9in=False)
 
         elif row_code == "2B":
             _append_bins(geom.wire_bins_per_full_row, 0.0, bay_side_fixed=None)
@@ -272,6 +304,7 @@ def _create_modular_slots(scenario: ExperimentScenario) -> List[PhysicalSlot]:
                             bay_side=bay_side,
                             x_center_cm=(c + 0.5) * peg_x_step,
                             partition_count=1,
+                            max_od_cm=geom.peg_max_od_cm,
                         )
                     )
         else:
@@ -920,6 +953,11 @@ def run_single_replication(
         rolls_by_variant.setdefault(r.variant_id, []).append(r)
 
     n_bins, extra_styles = count_shelf_complexity(scenario.row_configs)
+    mixed_bin_drw_rows = count_mixed_bin_drawer_rows(scenario.row_configs)
+    size_mix_blur = beh.drawer_size_mix_penalty if has_mixed_drawer_sizes(scenario.row_configs) else 0.0
+    n_drawer_slots = sum(1 for s in slots if s.mechanism_id.startswith("split_drawer"))
+    slot_deficit_blur = beh.slot_deficit_penalty * max(0.0, (48 - n_drawer_slots) / 48.0)
+    row_width_blur = beh.row_width_mismatch_penalty if has_row_width_mismatch(scenario.row_configs) else 0.0
     all_bin_slots = [s for s in slots if "wire_bin" in s.mechanism_id]
 
     eye_mechs = [s.mechanism_id for s in slots if s.tier_index == 1]
@@ -995,11 +1033,18 @@ def run_single_replication(
             if (
                 "wire_bin" in origin_mech
                 and scenario.row_configs
-                and any(rc in ("2B", "1D_2B", "1B_1D_1B", "2B_1D") for rc in scenario.row_configs)
+                and any(rc in ("2B", "1D6_2B", "1B_1D6_1B", "2B_1D6", "1D_2B", "1B_1D_1B", "2B_1D") for rc in scenario.row_configs)
             ):
                 t_step += 0.45
             if extra_styles > 0:
                 t_step += 0.18 * extra_styles
+            if (
+                scenario.row_configs
+                and 1 <= slot_obj.tier_index <= 2
+                and "B" in scenario.row_configs[slot_obj.tier_index - 1]
+                and "D" in scenario.row_configs[slot_obj.tier_index - 1]
+            ):
+                t_step += 0.55
 
             if spec.is_pull_down:
                 is_heavy_peg_use = roll.is_rush_priority or len(slot_obj.occupant_roll_ids) >= 2
@@ -1129,11 +1174,17 @@ def run_single_replication(
                 if (home_slot.mechanism_id.startswith("split_drawer") and home_slot.partition_count == 3)
                 else 0.0
             )
-            same_slot_mix = 0.04 * max(0, len(home_slot.assigned_variant_ids) - 1) if len(home_slot.occupant_roll_ids) >= 3 else 0.0
+            same_slot_mix = beh.multi_sku_slot_penalty * max(0, len(home_slot.assigned_variant_ids) - 1)
             bin_dump_blur = beh.bin_dump_error_penalty * n_bins + (
                 0.06 if "wire_bin" in home_slot.mechanism_id else 0.0
             )
-            cog_load_blur = beh.mech_diversity_penalty * extra_styles
+            cog_load_blur = (
+                beh.mech_diversity_penalty * extra_styles
+                + beh.bin_drawer_same_row_penalty * mixed_bin_drw_rows
+                + size_mix_blur
+                + slot_deficit_blur
+                + row_width_blur
+            )
             phi_blur = max(
                 0.65,
                 1.0
