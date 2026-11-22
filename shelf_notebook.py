@@ -505,7 +505,7 @@ def _(
             },
         ),
         mo.md(
-            "`Same-Drawer A/B/C` gives the share of co-retrieved product variants placed in one drawer, while `Cross-Shelf Mixup` tracks rolls ending up on the wrong vertical shelf tier by Cycle 1,000. Combining `3 x 9in` (`21.6 cm` inner) and `3 x 6in` (`14.0 cm` inner) drawers on each lower row (`ORI-261`: `Top: Peg | Mid: 3D9_3D6_4P | Btm: 3D9_3D6_4P`) gives `48` drawer slots (`45 in` uniform width) with room for every roll up to `23.0 cm` OD inside enclosed drawers, reaching `89.5%` accuracy at `0.31x` effort (`2.0%` cross-shelf mixup) and beating `5D9_4P | 5D9_4P` (`ORI-5D9`, `88.3%`, `0.33x`), which only has `40` drawer slots."
+            "`Same-Drawer A/B/C` gives the share of co-retrieved product variants placed in one drawer, while `Cross-Shelf Mixup` tracks rolls ending up on the wrong vertical shelf tier by Cycle 1,000. Combining `3 x 9in` (`21.6 cm` inner) and `3 x 6in` (`14.0 cm` inner) drawers on each lower row (`ORI-261`: `Top: Peg | Mid: 3D9_3D6_4P | Btm: 3D9_3D6_4P`) gives `48` drawer slots (`45 in` uniform width) with room for every roll up to `23.0 cm` OD inside enclosed drawers, reaching `89.5%` accuracy at `0.31x` effort (`2.0%` cross-shelf mixup) and beating `5D9_4P | 5D9_4P` (`ORI-121`, `88.3%`, `0.33x`), which only has `40` drawer slots."
         ),
         mo.image(
             src=_fig_dir / "fig1_entropy_decay.png",
@@ -514,7 +514,7 @@ def _(
         ),
         mo.md(
             "*Figure 1: Home-slot accuracy across 1,000 work cycles for key benchmark configurations.* "
-            "Each sawtooth dip marks a morning rush (cycles 1 to 22 of each 50-cycle shift), and each rise marks afternoon cleanup. Only the two bin-free `9in` drawer layouts (`ORI-261` at `89.5%`, `ORI-5D9` at `88.3%`) stay above the `80%` usability floor across all 20 shifts."
+            "Each sawtooth dip marks a morning rush (cycles 1 to 22 of each 50-cycle shift), and each rise marks afternoon cleanup. Only the two bin-free `9in` drawer layouts (`ORI-261` at `89.5%`, `ORI-121` at `88.3%`) stay above the `80%` usability floor across all 20 shifts."
         ),
         mo.image(
             src=_fig_dir / "fig2_cross_tier_contamination.png",

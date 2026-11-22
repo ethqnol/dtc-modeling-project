@@ -21,7 +21,7 @@ PALETTE = {
     "ORI-099": (0.576, 0.471, 0.376),
     "ORI-085": (0.867, 0.518, 0.322),
     "ORI-245": (0.333, 0.659, 0.408),
-    "ORI-5D9": (0.800, 0.475, 0.655),
+    "ORI-121": (0.800, 0.475, 0.655),
     "ORI-325": (0.392, 0.710, 0.804),
     "ORI-021": (0.298, 0.447, 0.690),
     "ORI-CHAMP": (0.090, 0.545, 0.355),
@@ -161,12 +161,12 @@ def plot_fig1_entropy_decay(
     summaries: Dict[str, ExperimentSummary], out_dir: Path
 ) -> Tuple[Path, Path]:
     """Chart 1: Accuracy decay curves with +-1 SD bands and 80% usability threshold."""
-    base_ids = ["ORI-5D9", "ORI-021", "ORI-245", "ORI-325", "ORI-099", "ORI-258"]
+    base_ids = ["ORI-121", "ORI-021", "ORI-245", "ORI-325", "ORI-099", "ORI-258"]
     selected_ids = (["ORI-CHAMP"] if "ORI-CHAMP" in summaries else []) + base_ids
     champ_long = _format_champ_labels(summaries["ORI-CHAMP"])[0] if "ORI-CHAMP" in summaries else "ORI-001"
     short_labels = {
         "ORI-CHAMP": champ_long,
-        "ORI-5D9": "ORI-5D9: Top: Peg | Mid: 5D9_4P | Btm: 5D9_4P",
+        "ORI-121": "ORI-121: Top: Peg | Mid: 5D9_4P | Btm: 5D9_4P",
         "ORI-021": "ORI-021: Top: Peg | Mid: 7D6_4P | Btm: 1B_4D6_3P",
         "ORI-245": "ORI-245: Top: Peg | Mid: 7D6_4P | Btm: 1D6_2B",
         "ORI-325": "ORI-325: Top: Peg | Mid: 1B_4D6_4P | Btm: 2B",
@@ -736,7 +736,7 @@ def plot_fig4_capacity_and_partitions(
             "ORI-099": "ORI-099: Top: Peg | Mid: 7D6_3P | Btm: 1B_4D6_3P (low cue)",
             "ORI-085": "ORI-085: Top: Peg | Mid: 7D6_3P | Btm: 1B_4D6_3P",
             "ORI-245": "ORI-245: Top: Peg | Mid: 7D6_4P | Btm: 1D6_2B",
-            "ORI-5D9": "ORI-5D9: Top: Peg | Mid: 5D9_4P | Btm: 5D9_4P",
+            "ORI-121": "ORI-121: Top: Peg | Mid: 5D9_4P | Btm: 5D9_4P",
             "ORI-325": "ORI-325: Top: Peg | Mid: 1B_4D6_4P | Btm: 2B",
             "ORI-021": "ORI-021: Top: Peg | Mid: 7D6_4P | Btm: 1B_4D6_3P",
         }

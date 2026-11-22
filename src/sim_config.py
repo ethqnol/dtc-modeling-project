@@ -1024,7 +1024,7 @@ def build_default_experiments() -> List[ExperimentScenario]:
             layout_seed=1400,
         ),
         ExperimentScenario(
-            exp_id="ORI-5D9",
+            exp_id="ORI-121",
             name="Top: Peg | Mid: 5D9_4P | Btm: 5D9_4P",
             topology="M_modular",
             strategy="C_hybrid",
